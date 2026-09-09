@@ -3,6 +3,7 @@ import argparse
 import hashlib
 import json
 import shutil
+import socket
 import subprocess
 import tarfile
 from pathlib import Path
@@ -28,13 +29,14 @@ def collect(recipes, cache, output):
             path=folder/'build'/name
             if path.is_file():
                 target=output/'configuration'/folder.name/name;target.parent.mkdir(parents=True,exist_ok=True)
-                shutil.copyfile(path,target)
+                target.write_text(path.read_text().replace(socket.gethostname(), 'build-host'))
     cert=Path('/data/data/com.termux/files/usr/etc/tls/cert.pem')
     (inputs/'ca-certificates').mkdir(exist_ok=True)
     shutil.copyfile(cert,inputs/'ca-certificates/cacert-2025-08-12.pem')
     host=subprocess.check_output(['dpkg-query','-W','-f=${Package}\t${Version}\n'],text=True)
     (output/'host-packages.tsv').write_text(host)
     (output/'toolchain.txt').write_text(subprocess.check_output(['/home/builder/lib/android-ndk-r28c/toolchains/llvm/prebuilt/linux-x86_64/bin/clang','--version'],text=True))
+    (output/'SANITIZATION.txt').write_text('Only the local hostname in generated configuration evidence was replaced with build-host. Source archives and build options are unchanged.\n')
     files={str(p.relative_to(output)):hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(output.rglob('*')) if p.is_file()}
     (output/'SHA256.json').write_text(json.dumps(files,indent=2)+'\n')
     print(json.dumps({'capturedFiles':len(files),'bytes':sum(p.stat().st_size for p in output.rglob('*') if p.is_file())}))
