@@ -15,12 +15,14 @@ public final class RuntimeTest extends Instrumentation {
     private boolean downloadX;
     private boolean repeat;
     private String instagramLink;
+    private String instagramExpectedError;
     @Override public void onCreate(Bundle arguments) {
         super.onCreate(arguments);
         xLink = arguments == null ? null : arguments.getString("xLink");
         downloadX = arguments != null && "true".equals(arguments.getString("downloadX"));
         repeat = arguments != null && "true".equals(arguments.getString("repeat"));
         instagramLink = arguments == null ? null : arguments.getString("instagramLink");
+        instagramExpectedError = arguments == null ? null : arguments.getString("instagramExpectedError");
         start();
     }
     @Override public void onStart() {
@@ -64,11 +66,17 @@ public final class RuntimeTest extends Instrumentation {
             if(instagramLink!=null) {
                 try {
                     JSONObject post=probe.extractInstagram(instagramLink);
+                    if(instagramExpectedError!=null)throw new IllegalStateException("Expected restriction not returned");
                     JSONObject downloaded=XMedia.downloadAll(getTargetContext(),post,true);
                     report.put("instagramAllSaved",downloaded.optBoolean("allSaved"));
                     report.put("instagramCount",post.getJSONArray("media").length());
                     if(!downloaded.optBoolean("allSaved"))report.put("instagramError","download-incomplete");
-                } catch(Exception failure){report.put("instagramError",failure.getClass().getSimpleName());}
+                } catch(Exception failure){
+                    if("audience-restricted".equals(instagramExpectedError) && instagramExpectedError.equals(failure.getMessage())) {
+                        report.put("instagramOutcome","audience-restricted-as-expected");
+                        report.put("instagramMessage",FailureText.describe(failure));
+                    } else report.put("instagramError",failure.getClass().getSimpleName());
+                }
             }
             boolean passed = !report.has("fixtureError") && !report.has("xError") && !report.has("instagramError")
                     && !(report.has("x") && report.getJSONObject("x").has("gifError"));

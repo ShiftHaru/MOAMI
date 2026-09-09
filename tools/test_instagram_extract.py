@@ -7,6 +7,13 @@ ig=importlib.util.module_from_spec(spec)
 spec.loader.exec_module(ig)
 
 class InstagramTest(unittest.TestCase):
+    def test_access_restriction_is_not_a_storage_failure(self):
+        message = "This content isn't available to everyone: It can't be seen by certain audiences."
+        self.assertEqual('audience-restricted', ig.error_category(Exception(message)))
+        for message, code in [('HTTP 429', 'rate-limited'), ('login required', 'authentication-required'),
+                              ('404 not found', 'unavailable'), ('timed out', 'network-timeout'),
+                              ('unknown https://example.org/?secret=test', 'extraction-failed')]:
+            self.assertEqual(code, ig.error_category(Exception(message)))
     def test_mixed_carousel_preserves_photos_and_unknown_video_dimensions(self):
         small={'url':'https://s.cdninstagram.com/s.jpg?sig=a','width':20,'height':20}
         large={'url':'https://s.cdninstagram.com/l.jpg?sig=b','width':1200,'height':800}

@@ -84,19 +84,24 @@ def extract(runtime_path, url):
         return normalize(extractor.product, match.group(1))
 
 
+def error_category(error):
+    message = str(error).lower()
+    if "isn't available to everyone" in message or "can't be seen by certain audiences" in message:
+        return 'audience-restricted'
+    if '429' in message or 'rate-limit' in message:
+        return 'rate-limited'
+    if 'login' in message or 'logged-in' in message or 'registered users' in message:
+        return 'authentication-required'
+    if '404' in message or 'not found' in message:
+        return 'unavailable'
+    if 'timed out' in message:
+        return 'network-timeout'
+    return 'extraction-failed'
+
+
 if __name__ == '__main__':
     try:
         result = extract(sys.argv[1], sys.argv[2])
     except Exception as error:
-        message = str(error).lower()
-        category = 'extraction-failed'
-        if '429' in message or 'rate-limit' in message:
-            category = 'rate-limited'
-        elif 'login' in message or 'logged-in' in message or 'registered users' in message:
-            category = 'authentication-required'
-        elif '404' in message or 'not found' in message:
-            category = 'unavailable'
-        elif 'timed out' in message:
-            category = 'network-timeout'
-        result = {'error': category}
+        result = {'error': error_category(error)}
     print(json.dumps(result, ensure_ascii=True))

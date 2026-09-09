@@ -20,6 +20,10 @@ public class FailureTextTest {
         assertTrue(unavailable.contains("접근"));
         assertNotEquals(auth, rate);
         assertNotEquals(rate, unavailable);
+        String audience = FailureText.describe(new IOException("audience-restricted"));
+        assertTrue(audience.contains("접근 대상"));
+        assertFalse(audience.contains("저장 공간"));
+        assertNotEquals(auth, audience);
     }
     @Test public void timeoutIsNotReportedAsUserCancellation() {
         assertTrue(FailureText.describe(new java.net.SocketTimeoutException("secret")).contains("응답 시간"));
