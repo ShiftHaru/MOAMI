@@ -10,7 +10,7 @@ APK asset. Original upstream attribution is retained.
 
 `third_party/BUILDING_SOURCE_RELEASE.md` describes the corresponding-source
 bundle: actual patched recipes, original source inputs, build configuration,
-62 Maven source JARs, desugaring release sources, yt-dlp sources and notices.
+57 unique Maven source JARs for 62 binary artifacts, desugaring release sources, yt-dlp sources and notices.
 Python and QuickJS were rebuilt from the extracted recipe archive using the
 existing build cache/sysroot; this is not a clean-room or byte-reproducibility
 claim. On an ARM64 Android 16 device, runtime imports, QuickJS, generated MP4/GIF,

@@ -21,8 +21,12 @@ def package(root, native, runtime, output, revision):
     hashes = {}
     with tarfile.open(output, 'w:gz') as target:
         def add(name, data, mode=0o644):
-            if name in hashes or name.startswith('/') or '..' in Path(name).parts:
-                raise ValueError('Invalid or duplicate archive member')
+            if name in hashes:
+                if hashes[name] == digest(data):
+                    return  # Multiple binary variants can share one source JAR.
+                raise ValueError('Conflicting archive member')
+            if name.startswith('/') or '..' in Path(name).parts:
+                raise ValueError('Invalid archive member')
             info = tarfile.TarInfo(name)
             info.size = len(data)
             info.mode = mode
