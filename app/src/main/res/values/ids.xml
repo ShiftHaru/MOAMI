@@ -1,0 +1,4 @@
+<resources>
+    <item name="handle_up" type="id" />
+    <item name="handle_down" type="id" />
+</resources>

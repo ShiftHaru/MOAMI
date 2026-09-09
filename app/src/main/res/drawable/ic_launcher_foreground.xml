@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 108dp adaptive layer, 68dp centered artwork; character fits the 66dp safe region. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:left="20dp" android:top="20dp" android:right="20dp" android:bottom="20dp">
+        <bitmap android:src="@drawable/ic_launcher_art" android:gravity="fill" android:filter="true" />
+    </item>
+</layer-list>

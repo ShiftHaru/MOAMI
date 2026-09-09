@@ -22,7 +22,7 @@ def adb(*args):
 def activation():
     root = ET.fromstring(adb('shell', 'run-as', package, 'cat', 'shared_prefs/probe.xml'))
     return {x.attrib['name']: x.attrib.get('value') for x in root
-            if x.attrib.get('name') in ('enabled', 'previewConsentVersion', 'xDrawerConsent')}
+            if x.attrib.get('name') in ('enabled', 'previewConsentVersion', 'xDrawerConsent', 'galleryConsentVersion', 'chromeDrawer', 'chromeDrawerPosition')}
 
 def state():
     text = adb('shell', 'dumpsys', 'accessibility')

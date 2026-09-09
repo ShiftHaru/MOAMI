@@ -158,6 +158,18 @@ public final class NativeProbe {
         return raw;
     }
 
+    public JSONObject extractInstagram(String link) throws Exception {
+        String canonical = InstagramLink.canonical(link);
+        File script = new File(root, "instagram_extract.py");
+        try (java.io.InputStream input = context.getAssets().open("instagram_extract.py")) {
+            Files.copy(input, script.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+        }
+        JSONObject raw = new JSONObject(run("libpython.so", 90, script.getPath(),
+                new File(root, "yt-dlp/yt-dlp").getPath(), canonical));
+        if (raw.has("error")) throw new IOException(raw.getString("error"));
+        return raw;
+    }
+
     public JSONObject inspectX(String link) throws Exception {
         JSONObject raw = extractX(link);
         return new JSONObject().put("post", XLink.canonical(link)).put("extractor", raw.optString("extractor"))

@@ -6,6 +6,8 @@
 local.properties
 *.jks
 *.keystore
+signing.properties
+**/release/
 __pycache__/
 .agents/
 # Local agent configuration/session data; keep AGENTS.md tracked.

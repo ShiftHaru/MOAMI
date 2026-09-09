@@ -1,5 +1,37 @@
 # Third-party components in the X probe
 
+## Integrated Material 3 UI (0.23.0)
+
+The integrated `app` uses `com.google.android.material:material:1.14.0`.
+Its Apache-2.0 LICENSE is preserved byte-for-byte in
+`../app/src/main/assets/licenses/material-components-LICENSE.txt` from
+https://raw.githubusercontent.com/material-components/material-components-android/1.14.0/LICENSE.
+`material-runtime-NOTICES.txt` collects embedded license/notice entries from the
+resolved runtime archives, with their component coordinates and entry names.
+`gallery-runtime-artifacts.json` records the current 69 resolved artifacts and
+the separate desugaring input by coordinate/hash, without local paths.
+These additions apply to `app`; the separate diagnostic `xprobe` UI is unchanged.
+This inventory does not resolve the previously documented native APK source gates.
+
+## Integrated gallery additions (0.22.0)
+
+The integrated `app` additionally uses `org.jsoup:jsoup:1.23.2` (MIT) to parse
+user-requested public HTML, with `com.android.tools:desugar_jdk_libs_nio:2.1.5`
+for Android compatibility. jsoup's pinned upstream LICENSE is preserved at
+`../app/src/main/assets/licenses/jsoup-MIT.txt` from
+https://raw.githubusercontent.com/jhy/jsoup/jsoup-1.23.2/LICENSE.
+The desugaring upstream LICENSE and ADDITIONAL_LICENSE_INFO (including Classpath
+exception information) are preserved in that directory from commit
+`092407c51c3eaaaa9e46f7b7e436dc642f614064` of
+https://github.com/google/desugar_jdk_libs. These are upstream notices, not proof
+of complete source correspondence for every transformed runtime class in an APK.
+The root project GPL text and yt-dlp's aggregate third-party notices are also
+included in the integrated app's assets. APK publication remains separate.
+
+The 50-artifact inventory below describes the pre-gallery baseline; it does not
+include jsoup or core-library desugaring and must not be presented as the complete
+0.22.0 dependency inventory.
+
 This is a local validation application. This inventory is not a completed license
 audit or authorization to redistribute the APK. Project decisions and remaining
 release checks are maintained in the Obsidian notes referenced by `AGENTS.md`.

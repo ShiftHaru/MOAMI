@@ -52,7 +52,7 @@ public final class ScanNotification extends BroadcastReceiver {
         PendingIntent stop = PendingIntent.getBroadcast(app, 1, new Intent(app, ScanNotification.class).setAction(STOP), PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
         PendingIntent dismiss = PendingIntent.getBroadcast(app, 2, new Intent(app, ScanNotification.class).setAction(DISMISS), PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
         Notification notification = new Notification.Builder(app, CHANNEL)
-                .setSmallIcon(android.R.drawable.ic_menu_search).setContentTitle("BrowserDownloader · 검사 활성")
+                .setSmallIcon(R.drawable.ic_stat_mascot).setContentTitle(context.getString(R.string.app_name)+" · 검사 활성")
                 .setContentText(status).setContentIntent(open).setDeleteIntent(dismiss).setOnlyAlertOnce(true).setOngoing(true)
                 .setVisibility(Notification.VISIBILITY_PRIVATE).setCategory(Notification.CATEGORY_SERVICE)
                 // A killed process cannot keep renewing a stale 'running' status.
@@ -62,6 +62,7 @@ public final class ScanNotification extends BroadcastReceiver {
     }
     static void stop(Context context) {
         SharedPage.pending.clear();
+        GallerySession.get(context).cancel();
         context.getSharedPreferences("probe", 0).edit().putBoolean("enabled", false).apply();
         PreviewStore.get(context).cancelRequests(); PreviewStore.get(context).cancelSaves();
         status = "Chrome 검사 대기"; refresh(context);

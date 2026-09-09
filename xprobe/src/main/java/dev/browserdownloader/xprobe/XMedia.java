@@ -40,11 +40,14 @@ public final class XMedia {
             try {
                 if (kind.equals("photo")) result = downloadPhoto(context, item);
                 else if (kind.equals("video") || kind.equals("animated_gif")) {
-                    result = download(context, item, convertGif && kind.equals("animated_gif"));
+                    boolean instagram = "Instagram".equals(item.optString("provider"));
+                    result = instagram ? downloadInstagramVideo(context, item)
+                            : download(context, item, convertGif && kind.equals("animated_gif"));
                     File dir = new File(context.getNoBackupFilesDir(), "x-media");
                     try {
-                        result.put("savedUri", PublicDownloads.publish(context, new File(dir, id + ".mp4"), "video/mp4"));
-                        if (result.has("gif")) result.getJSONObject("gif").put("savedUri",
+                        if(instagram) publishInstagramVideo(context, id, result);
+                        else result.put("savedUri", PublicDownloads.publish(context, new File(dir, id + ".mp4"), "video/mp4"));
+                        if (!instagram && result.has("gif")) result.getJSONObject("gif").put("savedUri",
                                 PublicDownloads.publish(context, new File(dir, id + ".converted.gif"), "image/gif"));
                     } catch (InterruptedException e) { throw e; }
                     catch (Exception e) { result.put("exportError", FailureText.describe(e)); }
@@ -72,13 +75,36 @@ public final class XMedia {
                 .put("folder", "Download/BrowserDownloader");
     }
 
+    private static void publishInstagramVideo(Context context, String id, JSONObject result) throws Exception {
+        File dir = new File(context.getNoBackupFilesDir(), "x-media");
+        File mp4 = new File(dir, id + ".mp4");
+        try {
+            boolean audio = Mp4Compatibility.hasAudioTrack(mp4);
+            result.put("hasAudioTrack", audio);
+            if(audio) {
+                result.put("savedUri", PublicDownloads.publish(context, mp4, "video/mp4"));
+                result.put("savedFormat", "MP4");
+            } else {
+                File gif = new File(dir, id + ".converted.gif");
+                JSONObject conversion = GifConversion.convertForDownload(mp4, gif);
+                String hash;
+                try(java.io.InputStream input = new java.io.FileInputStream(gif)){hash = PublicDownloads.sha256(input);}
+                result.put("sourceSha256", result.getString("sha256")).put("sha256", hash)
+                        .put("bytes", gif.length()).put("gif", conversion).put("mp4Saved", false);
+                result.put("savedUri", PublicDownloads.publish(context, gif, "image/gif"));
+                result.put("savedFormat", "GIF");
+            }
+        } finally { Files.deleteIfExists(mp4.toPath()); }
+    }
+
     private static JSONObject downloadPhoto(Context context, JSONObject item) throws Exception {
         String id = item.getString("id");
-        if (!id.matches("[0-9-]{1,52}")) throw new IOException("미디어 식별자 형식 미확인");
+        if (!id.matches("(?:[0-9-]{1,52}|ig-[A-Za-z0-9_-]{1,28}-[0-9]{1,2})")) throw new IOException("미디어 식별자 형식 미확인");
         URI uri = URI.create(item.getString("url"));
-        if (!"https".equals(uri.getScheme()) || !"pbs.twimg.com".equals(uri.getHost())
+        boolean instagram = "Instagram".equals(item.optString("provider"));
+        if (instagram ? !InstagramLink.mediaUrl(uri.toString()) : (!"https".equals(uri.getScheme()) || !"pbs.twimg.com".equals(uri.getHost())
                 || uri.getUserInfo() != null || uri.getPort() != -1 || !uri.getPath().startsWith("/media/")
-                || uri.getRawQuery() == null || !uri.getRawQuery().matches("format=(?:jpg|jpeg|png|webp)&name=orig"))
+                || uri.getRawQuery() == null || !uri.getRawQuery().matches("format=(?:jpg|jpeg|png|webp)&name=orig")))
             throw new IOException("원본 사진 후보 주소 불일치");
         File dir = new File(context.getNoBackupFilesDir(), "x-media");
         if (!dir.isDirectory() && !dir.mkdirs()) throw new IOException("저장 폴더 생성 실패");
@@ -126,7 +152,7 @@ public final class XMedia {
             try (java.io.InputStream input = new java.io.FileInputStream(partial)) { digest = PublicDownloads.sha256(input); }
             File target = new File(dir, id + "." + extension);
             Files.move(partial.toPath(), target.toPath(), StandardCopyOption.REPLACE_EXISTING);
-            boolean original = bounds.outWidth == item.optInt("expectedWidth") && bounds.outHeight == item.optInt("expectedHeight");
+            boolean original = !instagram && bounds.outWidth == item.optInt("expectedWidth") && bounds.outHeight == item.optInt("expectedHeight");
             JSONObject result = new JSONObject().put("mediaId", id).put("width", bounds.outWidth)
                     .put("height", bounds.outHeight).put("bytes", total).put("sha256", digest)
                     .put("photoSaved", true).put("originalVerified", original)
@@ -162,14 +188,36 @@ public final class XMedia {
         return result;
     }
 
+    private static JSONObject downloadInstagramVideo(Context context, JSONObject info) throws Exception {
+        JSONArray formats = info.getJSONArray("formats");
+        if(formats.length()<1 || formats.length()>6) throw new IOException("미지원 미디어 유형");
+        // Instagram may omit variant dimensions. Measure each file instead of guessing from its URL.
+        String id=info.getString("id");
+        if(!id.matches("ig-[A-Za-z0-9_-]{1,28}-[0-9]{1,2}")) throw new IOException("미디어 식별자 형식 미확인");
+        File dir=new File(context.getNoBackupFilesDir(),"x-media"), bestFile=new File(dir,id+".best.partial");
+        File target=new File(dir,id+".mp4"); JSONObject best=null; long area=-1;
+        try {
+            for(int n=0;n<formats.length();n++) {
+                if(Thread.currentThread().isInterrupted())throw new InterruptedException();
+                JSONObject single=new JSONObject(info.toString()).put("formats",new JSONArray().put(formats.getJSONObject(n)));
+                JSONObject result=download(context,single,false);
+                long pixels=(long)result.getInt("width")*result.getInt("height");
+                if(pixels>area){Files.copy(target.toPath(),bestFile.toPath(),StandardCopyOption.REPLACE_EXISTING);best=result;area=pixels;}
+            }
+            Files.move(bestFile.toPath(),target.toPath(),StandardCopyOption.REPLACE_EXISTING);
+            return best.put("allMp4ResolutionsKnown",true).put("quality","Highest measured resolution among provided MP4 variants; upload original unverified");
+        } finally { Files.deleteIfExists(bestFile.toPath()); }
+    }
+
     public static JSONObject download(Context context, JSONObject info, boolean convertGif) throws Exception {
         String stage = "MP4 후보 선택";
         try {
         List<Mp4Variant> variants = candidates(info);
-        Mp4Variant best = Mp4Variant.forDownload(variants, "animated_gif".equals(info.optString("kind")));
+        Mp4Variant best = "Instagram".equals(info.optString("provider")) && variants.size()==1
+                ? variants.get(0) : Mp4Variant.forDownload(variants, "animated_gif".equals(info.optString("kind")));
         stage = "MP4 저장 준비";
         String id = info.optString("id");
-        if (!id.matches("[0-9-]{1,52}")) throw new IOException("미디어 식별자 형식 미확인");
+        if (!id.matches("(?:[0-9-]{1,52}|ig-[A-Za-z0-9_-]{1,28}-[0-9]{1,2})")) throw new IOException("미디어 식별자 형식 미확인");
         File dir = new File(context.getNoBackupFilesDir(), "x-media");
         if (!dir.isDirectory() && !dir.mkdirs()) throw new IOException("저장 폴더 생성 실패");
         File target = new File(dir, id + ".mp4");

@@ -17,6 +17,9 @@ public final class PreviewTest extends Instrumentation {
     private String xpost;
     @Override public void onCreate(Bundle args) { super.onCreate(args); xgif = args != null && "true".equals(args.getString("xgif")); recovery = args == null ? null : args.getString("recovery"); boundary=args==null?null:args.getString("boundary"); xpost=args==null?null:args.getString("xpost"); start(); }
     @Override public void onStart() {
+        if ("handle".equals(boundary)) { HandleCheck.run(this); return; }
+        if ("gallery".equals(boundary)) { GalleryCheck.run(this); return; }
+        if ("galleryX".equals(boundary)) { GalleryCheck.run(this,true); return; }
         if ("conversionReuse".equals(boundary)) { ConversionReuseCheck.run(this); return; }
         if ("commitPrepare".equals(boundary) || "commitVerify".equals(boundary)) { CommitCrashCheck.run(this,boundary); return; }
         if ("transferPrepare".equals(boundary) || "transferVerify".equals(boundary)) { TransferCrashCheck.run(this,boundary); return; }

@@ -1,7 +1,11 @@
 <resources>
-    <style name="ResultsPopup" parent="android:style/Theme.Material.Light.Dialog.NoActionBar">
+    <style name="ResultsPopup" parent="GalleryTheme">
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowCloseOnTouchOutside">false</item>
         <item name="android:backgroundDimEnabled">true</item>
         <item name="android:backgroundDimAmount">0.35</item>
+        <item name="android:windowMinWidthMajor">0dp</item>
+        <item name="android:windowMinWidthMinor">0dp</item>
     </style>
 </resources>

@@ -18,6 +18,7 @@ final class PrivateMediaFiles {
         for (File file : files) {
             String name = file.getName();
             boolean temporary = name.matches("[0-9-]{1,52}\\.(mp4|photo|converted\\.gif)\\.partial")
+                    || name.matches("ig-[A-Za-z0-9_-]{1,28}-[0-9]{1,2}\\.(mp4|photo|best|converted\\.gif)\\.partial")
                     || name.matches("mp4-decode-[0-9]+\\.mp4");
             if (temporary && Files.isRegularFile(file.toPath(), LinkOption.NOFOLLOW_LINKS)) {
                 try { Files.delete(file.toPath()); }

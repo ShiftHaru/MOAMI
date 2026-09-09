@@ -1,0 +1,27 @@
+<resources>
+    <style name="GalleryTheme" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/gallery_primary</item>
+        <item name="colorOnPrimary">@color/gallery_on_primary</item>
+        <item name="colorPrimaryContainer">@color/gallery_primary_container</item>
+        <item name="colorOnPrimaryContainer">@color/gallery_on_primary_container</item>
+        <item name="colorSecondary">@color/gallery_primary</item>
+        <item name="colorSecondaryContainer">@color/gallery_primary_container</item>
+        <item name="colorOnSecondaryContainer">@color/gallery_on_primary_container</item>
+        <item name="android:fontFamily">sans</item>
+        <item name="android:windowLightStatusBar">@bool/gallery_light_bars</item>
+        <item name="android:windowLightNavigationBar">@bool/gallery_light_bars</item>
+        <item name="materialAlertDialogTheme">@style/GalleryDialog</item>
+    </style>
+    <style name="GalleryDialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="shapeAppearanceOverlay">@style/GalleryPopupShape</item>
+    </style>
+    <style name="GalleryPopupShape" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">24dp</item>
+    </style>
+    <color name="gallery_primary">#006A60</color>
+    <color name="gallery_on_primary">#FFFFFF</color>
+    <color name="gallery_primary_container">#9EF2E3</color>
+    <color name="gallery_on_primary_container">#00201B</color>
+    <bool name="gallery_light_bars">true</bool>
+</resources>
