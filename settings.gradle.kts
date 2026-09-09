@@ -12,7 +12,7 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "BrowserDownloader"
+rootProject.name = "MOAMI"
 include(":app")
 include(":xprobe")
 include(":xmedia")
