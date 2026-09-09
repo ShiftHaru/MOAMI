@@ -14,3 +14,4 @@ xprobe/src/main/res/raw/ytdlp binary
 # Preserve unmodified upstream license/notice bytes.
 xprobe/src/main/assets/licenses/** -text
 third_party/** -text
+LICENSE -text

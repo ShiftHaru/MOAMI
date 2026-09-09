@@ -10,13 +10,22 @@ UI/UX 변경 전 기준 버전은 `0.21.0-service-lifecycle`입니다.
 
 ## 라이선스·배포 상태
 
-**현재 통합 앱은 MIT-only 배포 대상이 아닙니다.** `:app → :xmedia`와 독립 `:xprobe`는
-GPL-3.0인 youtubedl-android 0.18.1을 사용하며 NativeProbe에서 직접 호출합니다.
-자체 코드의 라이선스는 소유자 결정 대기이며 이 README는 라이선스 부여가 아닙니다.
-GPL 구성물의 조건을 MIT로 대체하지 않습니다.
+Copyright (C) 2026 BrowserDownloader contributors.
+
+BrowserDownloader의 자체 소스 코드·문서·직접 제작 시험 리소스는
+**GNU General Public License version 3 only (SPDX: GPL-3.0-only)**로 제공합니다.
+이 프로그램은 유용하기를 바라며 배포하지만 상품성이나 특정 목적 적합성을 포함한
+어떠한 보증도 제공하지 않습니다. 수정·재배포 조건은 [LICENSE](LICENSE)를 따릅니다.
+제3자 코드·리소스·고지에는 각 구성물의 기존 라이선스가 적용됩니다.
+
+`:app → :xmedia`와 독립 `:xprobe`는 GPL-3.0인 youtubedl-android 0.18.1을
+사용합니다. 2026-09-09에 기능을 유지하는 GPL 공개 방향을 확정했습니다.
 
 포함 Python/QuickJS/전이 구성물의 고지 및 대응 소스 검토도 미완료입니다.
 공개 APK/Release 업로드 준비 완료를 의미하지 않습니다.
+APK 배포 시에는 해당 태그의 앱 소스뿐 아니라 필요한 의존성 대응 소스와
+빌드 입력도 제공해야 합니다. 현재 소스 저장소의 LICENSE 추가만으로 이를
+완료했다고 간주하지 않습니다. 빌드 출력과 로컬 시험 APK는 Git에서 제외합니다.
 출처·보존 고지는 [THIRD_PARTY_NOTICES](xprobe/THIRD_PARTY_NOTICES.md)를 확인하세요.
 기획과 상세 검토 기록은 [AGENTS.md](AGENTS.md)가 지정하는 Obsidian에서 관리합니다.
 
