@@ -55,7 +55,13 @@ For building the exact provided payload, set `MOAMI_NATIVE_RUNTIME` to the absol
 your generated runtime and use its reviewed lock as described above.
 
 From `app-source/`, with JDK 21, Android SDK/Build Tools 36.1.0 and an **external**
-signing properties file (README):
+signing properties file:
+
+Set `BROWSERDOWNLOADER_SIGNING_PROPERTIES` to a UTF-8 Java properties file
+outside the repository. It must contain `storeFile`, `storePassword`, `keyAlias`
+and `keyPassword`. Use `/` in paths; relative keystore paths are resolved against
+the properties file's directory. Keep the private key and passwords out of Git
+and source releases.
 
 ```powershell
 .\gradlew.bat :app:assembleRelease --no-configuration-cache

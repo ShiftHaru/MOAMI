@@ -11,14 +11,14 @@
 
 <p align="center">
   <a href="#features">주요 기능</a> · <a href="#usage">사용 방법</a> ·
-  <a href="#build">직접 빌드</a> · <a href="#limits">지원 범위</a> ·
+  <a href="#limits">지원 범위</a> ·
   <a href="#license">라이선스</a>
 </p>
 
 모아미는 Chrome에서 찾은 이미지와 X·Instagram의 공개 미디어를 갤러리에서 선택 저장하는 Android 앱입니다. 이미지를 하나씩 새 탭으로 열고 저장하는 반복 작업을 줄이기 위해 만들고 있습니다.
 
 > **개발 중 · APK 미공개**
-> 공개 APK 배포는 대응 소스·고지 검토 완료 전까지 보류합니다. 비공개 저장소의 시험용 릴리스는 저장소 접근 권한이 있는 사용자만 받을 수 있습니다. 직접 빌드는 아래 안내를 참고하세요.
+> 공개 APK 배포는 대응 소스·고지 검토 완료 전까지 보류합니다. 비공개 저장소의 시험용 릴리스는 저장소 접근 권한이 있는 사용자만 받을 수 있습니다.
 
 <a id="features"></a>
 ## 주요 기능
@@ -86,112 +86,6 @@
 
 저장 권한이 있는 콘텐츠만 이용하세요. 앱의 소스 라이선스가 콘텐츠의 다운로드·재배포 권한을 제공하지는 않습니다.
 
-<a id="build"></a>
-## 직접 빌드하기
-
-0.33.3부터 [대응 소스 빌드 안내](third_party/BUILDING_SOURCE_RELEASE.md)에 따라 네이티브 런타임을 먼저 준비합니다. `MOAMI_NATIVE_RUNTIME` 환경변수에 생성된 런타임 폴더의 절대 경로를 지정하세요. 대응 소스 배포 묶음의 `prebuilt-native/`도 사용할 수 있으며, 빌드 시 고정된 해시를 검증합니다.
-
-저장소를 내려받고 루트 폴더에서 실행합니다. 아래는 Windows에서 확인한 환경입니다.
-
-| 구성 | 버전 |
-| --- | --- |
-| Gradle 실행기 / 데몬 | JDK 21 / JDK 25 — [데몬 설정](gradle/gradle-daemon-jvm.properties)으로 고정 |
-| Android SDK / Build Tools | Platform 36.1 / 36.1.0 |
-| Gradle / Android Gradle Plugin | 9.5.1 / 9.2.1 — 프로젝트에 고정 |
-
-초기 도구와 의존성 다운로드에는 네트워크가 필요합니다.
-
-```powershell
-$env:JAVA_HOME = '<JDK 21 설치 경로>'
-$env:ANDROID_HOME = '<Android SDK 설치 경로>'
-.\gradlew.bat :app:assembleDebug
-```
-
-산출물: `app/build/outputs/apk/debug/app-debug.apk`
-
-### 특정 버전 빌드
-
-현재 브랜치를 바꾸지 않고, 로컬에 있는 태그·커밋·브랜치의 **커밋된 소스**를 별도 폴더에서 빌드합니다. 미커밋 수정은 포함하지 않습니다.
-
-```powershell
-# 커밋 지정: 기존 외부 인증서로 릴리스 빌드
-.\tools\build-version.ps1 -Version c0662f5
-
-# 현재 커밋 또는 로컬 태그 지정 (사용 가능한 태그: git tag --list)
-.\tools\build-version.ps1 -Version HEAD
-
-# 개발용 서명으로 빌드
-.\tools\build-version.ps1 -Version c0662f5 -Configuration Debug
-```
-
-결과는 Git에서 제외된 `.local/version-builds/<커밋>/<구성-실행ID>/`에 보관합니다. 성공한 APK와 함께 `build-info.json`에 실제 앱 버전·커밋·ABI·SHA-256·서명 검사 결과를 기록합니다. 작업 폴더 생성 후 실패한 실행은 `status: failed`로 구분하며, Gradle 오류는 `build.log`에서 확인합니다. 사전 입력·환경 검사 실패는 콘솔에 표시하며, 실행 중 강제 종료된 기록은 `building` 상태로 남을 수 있습니다.
-
-SDK는 `ANDROID_HOME`, `ANDROID_SDK_ROOT`, 기본 Android Studio SDK 위치 순으로 찾습니다. `JAVA_HOME`은 위 안내대로 설정하세요. 기본 릴리스 서명 설정은 아래와 같고, 다른 파일은 `-SigningProperties '<설정 파일 경로>'`로 지정합니다.
-
-자동 fetch·설치·push는 하지 않습니다. 과거 커밋의 빌드 설정과 ABI를 그대로 사용하므로 현재 ARM64 설정과 다를 수 있습니다. 외부 서명을 지원하지 않는 과거 버전의 릴리스 빌드는 중단하며, 해당 소스를 임의 수정하지 않습니다. 소스 사본과 로그는 진단을 위해 남깁니다. APK 빌드 성공이 재배포 검토 완료를 뜻하지는 않습니다.
-
-스크립트의 실제 빌드 및 현재 작업 보존 검사는 `.\tools\test_build_version.ps1 -Version HEAD`로 실행합니다. 릴리스 서명 환경이 필요합니다.
-
-<details>
-<summary><strong>개인 인증서로 릴리스 빌드</strong></summary>
-
-서명키와 설정 파일은 저장소 밖에 보관하세요. 기본 설정 위치는 `~/keyStore/signing.properties`이며, `BROWSERDOWNLOADER_SIGNING_PROPERTIES` 환경변수로 다른 경로를 지정할 수 있습니다.
-
-UTF-8 Java properties 형식으로 `storeFile`, `storePassword`, `keyAlias`, `keyPassword`가 필요합니다. 경로에는 `/`를 사용하며, 상대 키 경로는 설정 파일이 있는 폴더를 기준으로 합니다.
-
-```powershell
-.\gradlew.bat :app:assembleRelease --no-configuration-cache
-```
-
-산출물: `app/build/outputs/apk/release/app-release.apk`
-
-`0.33.3-full`은 모든 기능을 포함하며 기존 앱을 업데이트합니다. X·Instagram 전용 `0.33.3-share`는 아래 명령으로 따로 빌드합니다.
-
-```powershell
-.\gradlew.bat :app:assembleRelease -PmoamiShare=true --no-configuration-cache
-```
-
-Share 산출물: `app/build/share-only/outputs/apk/release/app-release.apk`. 앱 이름은 `MOAMI Share - 모아미`, 패키지는 `dev.browserdownloader.share`로 Full과 동시에 설치할 수 있습니다. 접근성 서비스·설정 단계·Chrome 서랍·웹페이지 이미지 수집은 없으며, X·Instagram 게시물 공유·입력·선택 저장을 지원합니다. 앱 데이터와 동의는 각각 관리하며 저장 폴더는 같습니다. 두 버전 모두 ARM64 전용입니다.
-
-특정 Git 버전의 Share 빌드: `.\tools\build-version.ps1 -Version HEAD -Edition share`. Share 구성이 없는 과거 버전은 거부합니다. Full은 기본값입니다.
-
-서명 설정이 없으면 릴리스 서명이 실패합니다. 서명 성공은 Play Protect 또는 Google Play 승인을 뜻하지 않습니다. APK를 배포하기 전 [배포 확인 항목](third_party/RELEASE_CHECKS.md)을 확인하세요.
-
-</details>
-
-<details>
-<summary><strong>검사 명령과 프로젝트 구성</strong></summary>
-
-```powershell
-.\gradlew.bat :app:testDebugUnitTest :xmedia:testDebugUnitTest :app:lintDebug
-python -m unittest discover -s tools -p 'test_*.py'
-python tools/check_public_tree.py
-```
-
-Python 검사 도구에는 별도의 Python 실행 환경이 필요합니다. 공개 정보 검사는 패턴 기반 검사이며 모든 개인정보 부재를 보증하지 않습니다.
-
-| 경로 | 역할 |
-| --- | --- |
-| `app/` | 모아미 통합 Android 앱 |
-| `xmedia/` | X·Instagram 미디어 기능을 통합 앱에 제공하는 라이브러리 |
-| `xprobe/` | 미디어 기능의 공통 소스와 독립 진단 앱 |
-| `tools/` | 호스트·실기기 전달·공개 정보 검사 도구 |
-| `third_party/` | 의존성 소스·네이티브 빌드 근거·배포 확인 문서 |
-
-실기기 계측은 일반 빌드와 별개입니다. 계측 후에는 [최종 APK 업데이트 검사](tools/verify_apk_update.py)로 접근성 서비스 연결까지 확인합니다.
-
-네이티브 런타임 재빌드는 [WSL2 빌드 절차](third_party/WSL_NATIVE_BUILD.md)를 따릅니다. 일반 APK 빌드에 Docker는 필요하지 않습니다.
-
-</details>
-
-## 개발 상태와 참여
-
-현재 앱 버전은 `0.33.3-full` / `0.33.3-share`입니다. 작은 설정 화면 아이콘에서도 캐릭터가 표시되도록 크기에 비례한 여백을 적용했습니다. Chrome 사이트 정보 창의 닫기 버튼이 없는 경우를 처리하는 수정은 포함됐으며, 해당 문제 기기의 수정 후 실사용 확인은 대기 중입니다. 모든 지원 기기·사이트의 검증이 끝난 상태는 아닙니다.
-
-ARM64 Python·QuickJS를 확인 가능한 소스 빌드로 교체했습니다. 실기기에서 X GIF·Instagram 저장과 변환 검사를 통과했습니다. APK 공개 전 필요한 대응 소스·고지 검토는 [네이티브 소스 확인 현황](third_party/NATIVE_SOURCE_GAPS.md)에 정리합니다.
-
-문제를 제보할 때는 앱 버전, Android 버전, 재현 순서, 기대한 결과와 실제 결과를 함께 알려주세요. 로그·스크린샷에서 개인 콘텐츠와 계정 정보, 쿠키·토큰·인증 URL을 제거하세요. 개발 작업의 기록 절차는 [AGENTS.md](AGENTS.md)를 참고하세요.
-
 <a id="license"></a>
 ## 라이선스
 
@@ -199,6 +93,6 @@ Copyright (C) 2026 BrowserDownloader contributors.
 
 자체 소스 코드·문서·직접 제작 시험 리소스는 **GNU GPL version 3 only (`GPL-3.0-only`)**로 제공합니다. 상품성·특정 목적 적합성을 포함한 보증을 제공하지 않으며, 수정·재배포 조건은 [LICENSE](LICENSE)를 따릅니다.
 
-제3자 구성물에는 각자의 라이선스가 적용됩니다. GPL-3.0인 youtubedl-android 0.18.1을 비롯한 의존성과 내장 리소스의 출처는 [제3자 고지](xprobe/THIRD_PARTY_NOTICES.md)에 보존합니다.
+제3자 구성물에는 각자의 라이선스가 적용됩니다. 의존성과 내장 리소스의 출처는 [제3자 고지](xprobe/THIRD_PARTY_NOTICES.md)에 보존합니다.
 
 APK를 배포하려면 앱 소스 외에도 필요한 의존성의 대응 소스와 빌드 입력·고지를 갖춰야 합니다. 현재 소스 공개 준비와 APK 배포 준비는 별개이며, 빌드 출력·APK·개인 서명키는 Git에서 제외합니다.
