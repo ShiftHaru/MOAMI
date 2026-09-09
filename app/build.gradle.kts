@@ -48,8 +48,8 @@ android {
         applicationId = "dev.browserdownloader.probe"
         minSdk = 29
         targetSdk = 36
-        versionCode = 33
-        versionName = "0.33.0-scalable-icon"
+        versionCode = 34
+        versionName = "0.33.1"
         ndk { abiFilters += "arm64-v8a" }
         testInstrumentationRunner = "dev.browserdownloader.probe.PreviewTest"
     }
