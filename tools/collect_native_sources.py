@@ -4,6 +4,7 @@ import hashlib
 import json
 import shutil
 import socket
+import re
 import subprocess
 import tarfile
 from pathlib import Path
@@ -29,7 +30,7 @@ def collect(recipes, cache, output):
             path=folder/'build'/name
             if path.is_file():
                 target=output/'configuration'/folder.name/name;target.parent.mkdir(parents=True,exist_ok=True)
-                target.write_text(path.read_text().replace(socket.gethostname(), 'build-host'))
+                target.write_text(re.sub(re.escape(socket.gethostname()), 'build-host', path.read_text(), flags=re.I))
     cert=Path('/data/data/com.termux/files/usr/etc/tls/cert.pem')
     (inputs/'ca-certificates').mkdir(exist_ok=True)
     shutil.copyfile(cert,inputs/'ca-certificates/cacert-2025-08-12.pem')
