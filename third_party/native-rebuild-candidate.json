@@ -1,7 +1,7 @@
 {
   "repository": "https://github.com/termux/termux-packages",
   "commit": "4af4053b0a94ac28a035159d3f425e0c32b8944f",
-  "status": "candidate-not-built",
+  "status": "candidate-patched-not-integrated",
   "matchesExistingApk": false,
   "explanation": "Chosen near the observed build date for investigation. Date proximity and matching Python version do not prove binary correspondence.",
   "packages": [
@@ -322,6 +322,16 @@
           "sha256": "fbb8ca16214bbe4609a5c257606c2dfa2da4c7a539976454c98053cc3a7e9c8a"
         }
       ]
+    }
+  ],
+  "patches": [
+    {
+      "path": "third_party/native-patches/libbz2-upstream-source.patch",
+      "sha256": "c30662786407dd6ee6acc0c7df5d09a0200f0d4b0dc4ccf26d4da24a11bcee22"
+    },
+    {
+      "path": "third_party/native-patches/ncurses-no-extra-foot.patch",
+      "sha256": "bb2393356288d9f38643cc7ecd20a776842205c2e8cf38db319559e0f1e7437a"
     }
   ]
 }
