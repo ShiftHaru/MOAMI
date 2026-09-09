@@ -75,6 +75,12 @@ FFmpeg is not a dependency of the final X probe.
 
 ## Resolved transitive artifacts
 
+Additional upstream source archives have been acquired for CPython 3.12.11,
+QuickJS 2025-04-26 and the wrapper 0.18.1 sources JAR. Exact download hashes are
+recorded in `../third_party/source-acquisition.json`; CPython and QuickJS original
+LICENSE files are included in `assets/licenses/`. This does not establish the
+complete Android native corresponding source. See `../third_party/RELEASE_CHECKS.md`.
+
 The selected debug runtime configuration is recorded in the packaged
 `assets/licenses/runtime-artifacts.json`: 50 artifacts from 47 Maven coordinates.
 Some coordinates provide auxiliary artifacts; resolution is not proof that every
