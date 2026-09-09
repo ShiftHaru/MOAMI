@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <application android:allowBackup="false" android:usesCleartextTraffic="false"
+        android:dataExtractionRules="@xml/no_backup" android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher" android:label="MOAMI Share - 모아미"
+        android:supportsRtl="true" android:theme="@style/GalleryTheme">
+        <activity android:name="dev.browserdownloader.probe.SetupActivity" android:exported="false" />
+        <activity android:name="dev.browserdownloader.probe.XShareActivity" android:exported="false"
+            android:theme="@style/ResultsPopup" android:launchMode="singleTask"
+            android:taskAffinity="${applicationId}.xshare" android:excludeFromRecents="true" />
+        <receiver android:name="dev.browserdownloader.probe.ScanNotification" android:exported="false" />
+        <activity android:name="dev.browserdownloader.probe.MainActivity" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name="dev.browserdownloader.probe.ShareActivity" android:exported="true"
+            android:theme="@android:style/Theme.NoDisplay" android:taskAffinity="${applicationId}.share"
+            android:excludeFromRecents="true">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>

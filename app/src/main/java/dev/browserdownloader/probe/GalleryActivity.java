@@ -33,20 +33,20 @@ public class GalleryActivity extends androidx.appcompat.app.AppCompatActivity {
         if(popup()){root.setBackground(GalleryUi.rounded(this,24,GalleryUi.bg(this)));root.setClipToOutline(true);}
         LinearLayout header=GalleryUi.column(this);GalleryUi.Header scroll=new GalleryUi.Header(this);scroll.addView(header);root.addView(scroll);
         LinearLayout title=new LinearLayout(this);title.setGravity(Gravity.CENTER_VERTICAL);
-        title.addView(GalleryUi.text(this,popup()?"미디어 선택":getString(R.string.app_name),22),new LinearLayout.LayoutParams(0,-2,1));
+        title.addView(GalleryUi.text(this,popup()?"미디어 선택":getApplicationInfo().loadLabel(getPackageManager()).toString(),22),new LinearLayout.LayoutParams(0,-2,1));
         if(popup())title.addView(GalleryUi.button(this,"닫기",this::finish));
         root.addView(title,0);
         if(!popup()){
-            drawer=new com.google.android.material.materialswitch.MaterialSwitch(this);drawer.setText("Chrome 서랍");drawer.setMinHeight(dp(56));drawer.setChecked(getSharedPreferences("probe",0).getBoolean("chromeDrawer",true));
-            drawer.setOnCheckedChangeListener((v,checked)->{getSharedPreferences("probe",0).edit().putBoolean("chromeDrawer",checked).apply();if(checked)activate();});header.addView(drawer);
+            if(!BuildConfig.SHARE_ONLY){drawer=new com.google.android.material.materialswitch.MaterialSwitch(this);drawer.setText("Chrome 서랍");drawer.setMinHeight(dp(56));drawer.setChecked(getSharedPreferences("probe",0).getBoolean("chromeDrawer",true));
+            drawer.setOnCheckedChangeListener((v,checked)->{getSharedPreferences("probe",0).edit().putBoolean("chromeDrawer",checked).apply();if(checked)activate();});header.addView(drawer);}
             LinearLayout input=new LinearLayout(this);input.setGravity(Gravity.CENTER_VERTICAL);
             com.google.android.material.textfield.TextInputLayout field=new com.google.android.material.textfield.TextInputLayout(this,null,com.google.android.material.R.attr.textInputOutlinedStyle);
             addressField=field;
-            field.setHint("X · Instagram · 웹페이지 주소");field.setBoxCornerRadii(dp(16),dp(16),dp(16),dp(16));
+            field.setHint(BuildConfig.SHARE_ONLY?"X · Instagram 게시물 주소":"X · Instagram · 웹페이지 주소");field.setBoxCornerRadii(dp(16),dp(16),dp(16),dp(16));
             address=new com.google.android.material.textfield.TextInputEditText(field.getContext());address.setSingleLine(true);address.setTextSize(16);address.setMinHeight(dp(56));address.setSaveEnabled(false);
             address.setInputType(android.text.InputType.TYPE_CLASS_TEXT|android.text.InputType.TYPE_TEXT_VARIATION_URI);address.setImeOptions(android.view.inputmethod.EditorInfo.IME_ACTION_GO);
             address.setText(session.draft);
-            address.setId(View.generateViewId());address.setContentDescription("X · Instagram · 웹페이지 주소");field.addView(address,new LinearLayout.LayoutParams(-1,-2));LinearLayout.LayoutParams fieldParams=new LinearLayout.LayoutParams(0,-2,1);fieldParams.setMarginEnd(dp(8));input.addView(field,fieldParams);
+            address.setId(View.generateViewId());address.setContentDescription(field.getHint());field.addView(address,new LinearLayout.LayoutParams(-1,-2));LinearLayout.LayoutParams fieldParams=new LinearLayout.LayoutParams(0,-2,1);fieldParams.setMarginEnd(dp(8));input.addView(field,fieldParams);
             submit=GalleryUi.button(this,"확인",this::submit);GalleryUi.primary(submit);input.addView(submit);header.addView(input);
             address.setOnEditorActionListener((v,action,event)->{if(action==android.view.inputmethod.EditorInfo.IME_ACTION_GO){submit();return true;}return false;});
         }
@@ -98,7 +98,7 @@ public class GalleryActivity extends androidx.appcompat.app.AppCompatActivity {
     private void consumePending(){if(session.pendingInput.isEmpty())return;String text=session.pendingInput;session.pendingInput="";if(address!=null)address.setText(text);if(session.saving())session.cancel();activate();session.lookup(text);}
     private void activate(){if(SetupActivity.ready(this)){getSharedPreferences("probe",0).edit().putBoolean("enabled",true).putBoolean("notificationHidden",false).apply();ScanNotification.refresh(this);}}
     private void submit(){if(session.busy){session.cancel();return;}if(gate())return;
-        if(PreviewRules.requestUrl(address.getText().toString()).isEmpty()){addressField.setError("https://로 시작하는 X·Instagram 게시물 또는 웹페이지 주소를 입력하세요.");address.requestFocus();return;}
+        if(PreviewRules.requestUrl(address.getText().toString()).isEmpty()){addressField.setError(BuildConfig.SHARE_ONLY?"X·Instagram 게시물 주소를 입력하세요.":"https://로 시작하는 X·Instagram 게시물 또는 웹페이지 주소를 입력하세요.");address.requestFocus();return;}
         addressField.setError(null);activate();session.lookup(address.getText().toString());
         var keyboard=(android.view.inputmethod.InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);keyboard.hideSoftInputFromWindow(address.getWindowToken(),0);address.clearFocus();}
     private void save(){
@@ -121,14 +121,14 @@ public class GalleryActivity extends androidx.appcompat.app.AppCompatActivity {
         String extra=session.report.optBoolean("truncated")?"\n수집 한도 도달 · 부분 결과":"";
         connected=ScanNotification.connected();
         String page=NodeProbe.safeUrl(session.report.optString("addressBarUrl"));
-        status.setText((page.isEmpty()?"":page+"\n")+session.message+extra+(SetupActivity.ready(this)&&!connected?"\n접근성 허용됨 · 시스템 연결 대기":""));
+        status.setText((page.isEmpty()?"":page+"\n")+session.message+extra+(!BuildConfig.SHARE_ONLY&&SetupActivity.ready(this)&&!connected?"\n접근성 허용됨 · 시스템 연결 대기":""));
         if(submit!=null){submit.setText(session.busy?"취소":"확인");submit.setEnabled(!session.previews.saving());}
         boolean working=session.saving();Set<Integer> available=available();
-        if(!working&&session.nodes().length()>0&&available.isEmpty())status.append("\n저장 주소가 없습니다. 링크를 다시 조회하거나 Chrome 현재 탭을 다시 검사하세요.");
+        if(!working&&session.nodes().length()>0&&available.isEmpty())status.append(BuildConfig.SHARE_ONLY?"\n저장 주소가 없습니다. 게시물 링크를 다시 조회하세요.":"\n저장 주소가 없습니다. 링크를 다시 조회하거나 Chrome 현재 탭을 다시 검사하세요.");
         save.setText(working?"작업 취소":"선택 "+session.selected.size()+"개 저장");save.setEnabled(working||!Collections.disjoint(session.selected,available));
         select.setText(!available.isEmpty()&&session.selected.containsAll(available)?"선택 해제":"모두 선택");select.setEnabled(!working&&!available.isEmpty());
         progress.setVisibility(working?View.VISIBLE:View.GONE);
-        empty.setText(working?"미디어를 확인하고 있습니다…\n위의 작업 취소로 중지할 수 있습니다.":"표시할 이미지가 없습니다.\nX·Instagram 게시물을 공유하거나 웹주소를 입력하세요.\nChrome에서는 < 버튼으로 현재 탭을 검사하세요.");
+        empty.setText(working?"미디어를 확인하고 있습니다…\n위의 작업 취소로 중지할 수 있습니다.":BuildConfig.SHARE_ONLY?"표시할 미디어가 없습니다.\nX·Instagram 게시물을 공유하거나 게시물 주소를 입력하세요.":"표시할 이미지가 없습니다.\nX·Instagram 게시물을 공유하거나 웹주소를 입력하세요.\nChrome에서는 < 버튼으로 현재 탭을 검사하세요.");
         if(!scrolling)adapter.notifyDataSetChanged();grid.post(this::requestVisible);
         if(foreground&&!session.saveNotice.isEmpty()){
             String notice=session.saveNotice;session.saveNotice="";

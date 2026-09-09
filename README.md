@@ -18,7 +18,7 @@
 모아미는 Chrome에서 찾은 이미지와 X·Instagram의 공개 미디어를 갤러리에서 선택 저장하는 Android 앱입니다. 이미지를 하나씩 새 탭으로 열고 저장하는 반복 작업을 줄이기 위해 만들고 있습니다.
 
 > **개발 중 · APK 미공개**
-> 현재는 소스 코드 공개를 준비하고 있습니다. 내려받을 수 있는 공식 APK는 제공하지 않습니다. 직접 빌드는 아래 안내를 참고하세요.
+> 공개 APK 배포는 대응 소스·고지 검토 완료 전까지 보류합니다. 비공개 저장소의 시험용 릴리스는 저장소 접근 권한이 있는 사용자만 받을 수 있습니다. 직접 빌드는 아래 안내를 참고하세요.
 
 <a id="features"></a>
 ## 주요 기능
@@ -143,6 +143,16 @@ UTF-8 Java properties 형식으로 `storeFile`, `storePassword`, `keyAlias`, `ke
 
 산출물: `app/build/outputs/apk/release/app-release.apk`
 
+`0.33.2-full`은 모든 기능을 포함하며 기존 앱을 업데이트합니다. X·Instagram 전용 `0.33.2-share`는 아래 명령으로 따로 빌드합니다.
+
+```powershell
+.\gradlew.bat :app:assembleRelease -PmoamiShare=true --no-configuration-cache
+```
+
+Share 산출물: `app/build/share-only/outputs/apk/release/app-release.apk`. 앱 이름은 `MOAMI Share - 모아미`, 패키지는 `dev.browserdownloader.share`로 Full과 동시에 설치할 수 있습니다. 접근성 서비스·설정 단계·Chrome 서랍·웹페이지 이미지 수집은 없으며, X·Instagram 게시물 공유·입력·선택 저장을 지원합니다. 앱 데이터와 동의는 각각 관리하며 저장 폴더는 같습니다. 두 버전 모두 ARM64 전용입니다.
+
+특정 Git 버전의 Share 빌드: `.\tools\build-version.ps1 -Version HEAD -Edition share`. Share 구성이 없는 과거 버전은 거부합니다. Full은 기본값입니다.
+
 서명 설정이 없으면 릴리스 서명이 실패합니다. 서명 성공은 Play Protect 또는 Google Play 승인을 뜻하지 않습니다. APK를 배포하기 전 [배포 확인 항목](third_party/RELEASE_CHECKS.md)을 확인하세요.
 
 </details>
@@ -174,7 +184,7 @@ Python 검사 도구에는 별도의 Python 실행 환경이 필요합니다. �
 
 ## 개발 상태와 참여
 
-현재 앱 버전은 `0.33.1`입니다. 작은 설정 화면 아이콘에서도 캐릭터가 표시되도록 크기에 비례한 여백을 적용했습니다. Chrome 사이트 정보 창의 닫기 버튼이 없는 경우를 처리하는 수정은 포함됐으며, 해당 문제 기기의 수정 후 실사용 확인은 대기 중입니다. 모든 지원 기기·사이트의 검증이 끝난 상태는 아닙니다.
+현재 앱 버전은 `0.33.2-full` / `0.33.2-share`입니다. 작은 설정 화면 아이콘에서도 캐릭터가 표시되도록 크기에 비례한 여백을 적용했습니다. Chrome 사이트 정보 창의 닫기 버튼이 없는 경우를 처리하는 수정은 포함됐으며, 해당 문제 기기의 수정 후 실사용 확인은 대기 중입니다. 모든 지원 기기·사이트의 검증이 끝난 상태는 아닙니다.
 
 ARM64 Python·QuickJS의 소스 빌드는 완료했지만, 새 런타임의 APK 통합과 실기기 회귀 검증은 남아 있습니다. APK 공개 전 필요한 대응 소스·고지 검토는 [네이티브 소스 확인 현황](third_party/NATIVE_SOURCE_GAPS.md)에 정리합니다.
 

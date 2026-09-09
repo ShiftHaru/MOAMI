@@ -9,6 +9,7 @@ Build a locally available Git tag or commit without switching the working tree.
 param(
     [Parameter(Mandatory = $true)][ValidateNotNullOrEmpty()][string]$Version,
     [ValidateSet('Release', 'Debug')][string]$Configuration = 'Release',
+    [ValidateSet('full', 'share')][string]$Edition = 'full',
     [string]$SigningProperties = $env:BROWSERDOWNLOADER_SIGNING_PROPERTIES
 )
 Set-StrictMode -Version Latest
@@ -59,6 +60,9 @@ try {
     $gradle = Join-Path $source 'gradlew.bat'
     $appBuild = Join-Path $source 'app/build.gradle.kts'
     if (-not (Test-Path $gradle) -or -not (Test-Path $appBuild)) { throw 'This revision does not contain the supported Android app layout.' }
+    if ($Edition -eq 'share' -and -not ([IO.File]::ReadAllText($appBuild).Contains('moamiShare'))) {
+        throw 'This revision does not support the share edition.'
+    }
     if ($Configuration -eq 'Release' -and -not ([IO.File]::ReadAllText($appBuild).Contains('BROWSERDOWNLOADER_SIGNING_PROPERTIES'))) {
         throw 'This revision does not support external release signing. Use Debug or select a compatible revision.'
     }
@@ -68,12 +72,13 @@ try {
     try {
         # Windows PowerShell can turn native stderr into terminating errors; use the exit code.
         $ErrorActionPreference = 'Continue'
-        & $gradle ":app:assemble$Configuration" --no-configuration-cache *> $log
+        & $gradle ":app:assemble$Configuration" "-PmoamiShare=$(($Edition -eq 'share').ToString().ToLowerInvariant())" --no-configuration-cache *> $log
         $buildExit = $LASTEXITCODE
         $ErrorActionPreference = 'Stop'
         if ($buildExit -ne 0) { throw "Gradle failed (exit $buildExit). See build.log." }
     } finally { $ErrorActionPreference = 'Stop'; Pop-Location }
-    $apkDir = Join-Path $source ('app/build/outputs/apk/' + $Configuration.ToLowerInvariant())
+    $buildRoot = if ($Edition -eq 'share') { 'app/build/share-only' } else { 'app/build' }
+    $apkDir = Join-Path $source ($buildRoot + '/outputs/apk/' + $Configuration.ToLowerInvariant())
     $metadata = Get-Content -LiteralPath (Join-Path $apkDir 'output-metadata.json') -Raw -Encoding UTF8 | ConvertFrom-Json
     $elements = @($metadata.elements)
     if ($elements.Count -ne 1) { throw 'Expected one APK; split APK builds are not supported.' }
@@ -93,7 +98,7 @@ try {
     try { $abis = @($zip.Entries.FullName | Where-Object { $_ -match '^lib/[^/]+/[^/]+$' } |
         ForEach-Object { $_.Split('/')[1] } | Sort-Object -Unique) } finally { $zip.Dispose() }
     if ($abis.Count -eq 0) { throw 'APK contains no native runtime.' }
-    $outputName = 'MOAMI-' + $commit.Substring(0, 12) + '-' + $Configuration.ToLowerInvariant() + '.apk'
+    $outputName = 'MOAMI-' + $commit.Substring(0, 12) + '-' + $Edition + '-' + $Configuration.ToLowerInvariant() + '.apk'
     $output = Join-Path $run $outputName
     Copy-Item -LiteralPath $apk -Destination $output
     $report.status = 'success'

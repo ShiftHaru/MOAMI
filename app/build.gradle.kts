@@ -4,6 +4,10 @@ plugins {
     id("com.android.application")
 }
 
+val shareOnly = providers.gradleProperty("moamiShare").orElse("false").get().toBooleanStrict()
+// Separate outputs prevent a share build from overwriting the full APK.
+if (shareOnly) layout.buildDirectory.set(layout.projectDirectory.dir("build/share-only"))
+
 // Keep private signing material outside the checkout; override for other machines.
 val signingPropertiesFile = file(providers.environmentVariable("BROWSERDOWNLOADER_SIGNING_PROPERTIES")
     .getOrElse("${System.getProperty("user.home")}/keyStore/signing.properties"))
@@ -22,6 +26,10 @@ dependencies {
 }
 
 android {
+    buildFeatures { buildConfig = true }
+    if (shareOnly) sourceSets.getByName("main") {
+        manifest.srcFile("src/share/AndroidManifest.xml")
+    }
     signingConfigs {
         create("release") {
             // An absent configuration fails release signing rather than using the debug key.
@@ -45,11 +53,12 @@ android {
     }
     buildToolsVersion = "36.1.0"
     defaultConfig {
-        applicationId = "dev.browserdownloader.probe"
+        applicationId = if (shareOnly) "dev.browserdownloader.share" else "dev.browserdownloader.probe"
         minSdk = 29
         targetSdk = 36
-        versionCode = 34
-        versionName = "0.33.1"
+        versionCode = 35
+        versionName = if (shareOnly) "0.33.2-share" else "0.33.2-full"
+        buildConfigField("boolean", "SHARE_ONLY", shareOnly.toString())
         ndk { abiFilters += "arm64-v8a" }
         testInstrumentationRunner = "dev.browserdownloader.probe.PreviewTest"
     }

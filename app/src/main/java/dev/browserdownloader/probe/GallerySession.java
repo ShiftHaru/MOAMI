@@ -42,7 +42,7 @@ final class GallerySession {
         saveSummary="저장 완료 "+complete+"개"+(incomplete>0?" · 미완료 "+incomplete+"개 (실패·취소 등)":"");
         saveNotice=saveSummary;saveBatch=List.of();
     }
-    private GallerySession(Context c){context=c;previews=PreviewStore.get(c);reload();}
+    private GallerySession(Context c){if(BuildConfig.SHARE_ONLY)message="X·Instagram 게시물을 공유하거나 주소를 입력하세요.";context=c;previews=PreviewStore.get(c);reload();}
     void listen(Runnable value){listener=value;}
     boolean observed(){return listener!=null;}
     void changed(){if(listener!=null)listener.run();}
@@ -53,6 +53,7 @@ final class GallerySession {
         try{
             if(f.length()>8L*1024*1024)throw new IllegalArgumentException();
             JSONObject next=new JSONObject(Files.readString(f.toPath(),StandardCharsets.UTF_8));
+            if(BuildConfig.SHARE_ONLY&&!Set.of("X","Instagram").contains(next.optString("source")))throw new IllegalArgumentException();
             JSONArray nodes=next.getJSONArray("nodes");if(nodes.length()>5000)throw new IllegalArgumentException();
             JSONArray images=new JSONArray();Set<Integer> seen=new HashSet<>();
             for(int n=0;n<nodes.length();n++){JSONObject node=nodes.getJSONObject(n);if(!node.optBoolean("hasImage"))continue;
@@ -64,16 +65,17 @@ final class GallerySession {
             if(replaced){selected.clear();selected.addAll(previews.selection(nextId));xPost=null;savedStatus.clear();}
             id=nextId;report=next;source=next.optString("source","Chrome 검사");
             if(replaced)message=next.optString("collectionStatus","저장할 항목을 선택하세요.");
-        }catch(Exception invalid){message="최근 기록을 읽을 수 없습니다. 링크 조회 또는 Chrome 검사를 다시 진행하세요.";report=new JSONObject();selected.clear();}
+        }catch(Exception invalid){message=BuildConfig.SHARE_ONLY?"최근 기록을 읽을 수 없습니다. 게시물 링크를 다시 조회하세요.":"최근 기록을 읽을 수 없습니다. 링크 조회 또는 Chrome 검사를 다시 진행하세요.";report=new JSONObject();selected.clear();}
     }
     void chromeChanged(){cancel();xPost=null;reload();changed();}
     boolean social(){return source.equals("X")||source.equals("Instagram");}
     boolean canSave(int index){return !saving() && (social()?xPost!=null&&index>0&&index<=nodes().length():previews.hasRequest(id,index));}
     boolean saving(){return busy||previews.saving();}
-    void cancel(){boolean wasBusy=saving();generation++;if(job!=null)job.cancel(true);job=null;busy=false;previews.cancelSaves();previews.cancelRequests();if(wasBusy)message="작업 취소 · 완료 파일은 유지됩니다.";changed();}
+    void cancel(){boolean wasBusy=saving();generation++;if(job!=null)job.cancel(true);job=null;busy=false;previews.cancelSaves();previews.cancelRequests();if(wasBusy)message="작업 취소 · 완료 파일은 유지됩니다.";if(BuildConfig.SHARE_ONLY)ScanNotification.status(context,"미디어 작업 종료");changed();}
     void lookup(String raw){
         if(busy)return;
-        String valid=PreviewRules.requestUrl(raw);
+        if(!AppMode.accepts(raw)){message="X·Instagram 게시물 또는 릴스만 지원합니다.";changed();return;}
+        String valid=PreviewRules.requestUrl(BuildConfig.SHARE_ONLY?XShareLink.extract(raw):raw);
         if(valid.isEmpty()){message="HTTP(S) 주소 하나를 입력하세요.";changed();return;}
         String host=URI.create(valid).getHost().toLowerCase(Locale.ROOT);
         boolean x=Set.of("x.com","www.x.com","twitter.com","www.twitter.com","mobile.twitter.com").contains(host);
@@ -115,7 +117,7 @@ final class GallerySession {
         NodeProbe.write(context,"latest.json",record);
         report=record;id=next;source=provider;xPost=x?(JSONObject)result:null;
         selected.clear();savedStatus.clear();
-        message=nodes.length()==0?"이미지를 찾지 못했습니다. 동적 페이지는 Chrome 현재 탭 검사를 이용하세요.":record.optString("collectionStatus");
+        message=nodes.length()==0?(BuildConfig.SHARE_ONLY?"미디어를 찾지 못했습니다. 게시물을 확인하세요.":"이미지를 찾지 못했습니다. 동적 페이지는 Chrome 현재 탭 검사를 이용하세요."):record.optString("collectionStatus");
         previews.resultChanged();
     }
     void save(){
