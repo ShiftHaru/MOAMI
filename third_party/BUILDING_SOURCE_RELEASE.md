@@ -1,8 +1,10 @@
-# Building the 0.33.3 corresponding source
+# Building the 0.33.4 corresponding source
 
 The source release includes `app-source/`, `native-source/`, `java-sources/`,
 `desugar-source/`, `prebuilt-native/`, `notices/`, `yt-dlp-source/` and a SHA-256 manifest.
-It corresponds to **0.33.3-full/share only**, not the old 0.33.2 APKs.
+It corresponds to **0.33.4-full/share** at the revision in `SOURCE_COMMIT.txt`.
+It reuses the source-built native runtime introduced in 0.33.3; it does not
+cover the old 0.33.2 native binaries.
 No signing private key, password or development Git history is included.
 
 ## Native source and build inputs
