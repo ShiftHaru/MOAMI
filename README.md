@@ -107,6 +107,29 @@ $env:ANDROID_HOME = '<Android SDK 설치 경로>'
 
 산출물: `app/build/outputs/apk/debug/app-debug.apk`
 
+### 특정 버전 빌드
+
+현재 브랜치를 바꾸지 않고, 로컬에 있는 태그·커밋·브랜치의 **커밋된 소스**를 별도 폴더에서 빌드합니다. 미커밋 수정은 포함하지 않습니다.
+
+```powershell
+# 커밋 지정: 기존 외부 인증서로 릴리스 빌드
+.\tools\build-version.ps1 -Version c0662f5
+
+# 현재 커밋 또는 로컬 태그 지정 (사용 가능한 태그: git tag --list)
+.\tools\build-version.ps1 -Version HEAD
+
+# 개발용 서명으로 빌드
+.\tools\build-version.ps1 -Version c0662f5 -Configuration Debug
+```
+
+결과는 Git에서 제외된 `.local/version-builds/<커밋>/<구성-실행ID>/`에 보관합니다. 성공한 APK와 함께 `build-info.json`에 실제 앱 버전·커밋·ABI·SHA-256·서명 검사 결과를 기록합니다. 작업 폴더 생성 후 실패한 실행은 `status: failed`로 구분하며, Gradle 오류는 `build.log`에서 확인합니다. 사전 입력·환경 검사 실패는 콘솔에 표시하며, 실행 중 강제 종료된 기록은 `building` 상태로 남을 수 있습니다.
+
+SDK는 `ANDROID_HOME`, `ANDROID_SDK_ROOT`, 기본 Android Studio SDK 위치 순으로 찾습니다. `JAVA_HOME`은 위 안내대로 설정하세요. 기본 릴리스 서명 설정은 아래와 같고, 다른 파일은 `-SigningProperties '<설정 파일 경로>'`로 지정합니다.
+
+자동 fetch·설치·push는 하지 않습니다. 과거 커밋의 빌드 설정과 ABI를 그대로 사용하므로 현재 ARM64 설정과 다를 수 있습니다. 외부 서명을 지원하지 않는 과거 버전의 릴리스 빌드는 중단하며, 해당 소스를 임의 수정하지 않습니다. 소스 사본과 로그는 진단을 위해 남깁니다. APK 빌드 성공이 재배포 검토 완료를 뜻하지는 않습니다.
+
+스크립트의 실제 빌드 및 현재 작업 보존 검사는 `.\tools\test_build_version.ps1 -Version HEAD`로 실행합니다. 릴리스 서명 환경이 필요합니다.
+
 <details>
 <summary><strong>개인 인증서로 릴리스 빌드</strong></summary>
 
