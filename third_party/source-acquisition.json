@@ -1,0 +1,30 @@
+{
+  "apkDistributionReady": false,
+  "reason": "Exact Android native patches, build inputs and transitive corresponding source remain unverified. Downloaded upstream source is not proof of binary correspondence.",
+  "artifacts": [
+    {
+      "file": "cpython-3.12.11.tar.xz",
+      "url": "https://www.python.org/ftp/python/3.12.11/Python-3.12.11.tar.xz",
+      "sha256": "c30bb24b7f1e9a19b11b55a546434f74e739bb4c271a3e3a80ff4380d49f7adb",
+      "bytes": 20525812,
+      "scope": "CPython 3.12.11; Android patches/build inputs unverified",
+      "notice": "xprobe/src/main/assets/licenses/cpython-LICENSE.txt"
+    },
+    {
+      "file": "quickjs-2025-04-26.tar.xz",
+      "url": "https://bellard.org/quickjs/quickjs-2025-04-26.tar.xz",
+      "sha256": "2f20074c25166ef6f781f381c50d57b502cb85d470d639abccebbef7954c83bf",
+      "bytes": 579376,
+      "scope": "QuickJS version identified by upstream PR338; Android patches/build inputs unverified",
+      "notice": "xprobe/src/main/assets/licenses/quickjs-LICENSE.txt"
+    },
+    {
+      "file": "youtubedl-android-library-0.18.1-sources.jar",
+      "url": "https://repo.maven.apache.org/maven2/io/github/junkfood02/youtubedl-android/library/0.18.1/library-0.18.1-sources.jar",
+      "sha256": "26e94f33de0ba802f3507862d509f80d100c1c9065ded7556d16ff51249c4a9a",
+      "bytes": 11451,
+      "scope": "Wrapper Java/Kotlin sources; not native corresponding source",
+      "sourceFiles": 13
+    }
+  ]
+}

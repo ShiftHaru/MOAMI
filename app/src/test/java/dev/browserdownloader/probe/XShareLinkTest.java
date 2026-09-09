@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 
 public class XShareLinkTest {
     @Test public void shareTextAndBoundaries(){
+        assertEquals("https://www.instagram.com/p/abc/",XShareLink.extract("설명 https://www.instagram.com/p/abc/?stkn=test"));
         assertEquals("https://x.com/name/status/123",XShareLink.extract("게시물 설명\nhttps://x.com/name/status/123?s=20"));
         assertEquals("https://x.com/name/status/123",XShareLink.extract("https://twitter.com/name/status/123"));
         for(String invalid:new String[]{null,"", "https://x.com.evil.test/name/status/123", "https://x.com@evil.test/name/status/123",

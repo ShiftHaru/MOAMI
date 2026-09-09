@@ -1,6 +1,7 @@
 package dev.browserdownloader.probe;
 
 import dev.browserdownloader.xprobe.XLink;
+import dev.browserdownloader.xprobe.InstagramLink;
 import java.util.regex.Pattern;
 
 final class XShareLink {
@@ -10,6 +11,8 @@ final class XShareLink {
         if (!links.find()) return "";
         String candidate = links.group();
         if (links.find()) return "";
-        try { return XLink.canonical(candidate); } catch (IllegalArgumentException invalid) { return ""; }
+        try { return XLink.canonical(candidate); } catch (IllegalArgumentException invalid) {
+            try { return InstagramLink.canonical(candidate); } catch (IllegalArgumentException unsupported) { return ""; }
+        }
     }
 }

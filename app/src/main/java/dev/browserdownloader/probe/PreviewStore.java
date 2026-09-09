@@ -18,6 +18,8 @@ import java.util.concurrent.*;
 
 /** Latest-session URLs live only here. Disk files contain dimensions and thumbnails only. */
 final class PreviewStore {
+    synchronized boolean saving() { return !saving.isEmpty(); }
+    synchronized boolean hasRequest(String id, int index) { return current.equals(id) && urls.containsKey(index); }
     record State(String text, int width, int height, boolean success, boolean failed) { }
     private static PreviewStore instance;
     static synchronized PreviewStore get(Context context) {
@@ -52,6 +54,7 @@ final class PreviewStore {
     private final Map<String, String> savedUrls = new HashMap<>();
     private final Map<Integer, Job> saving = new HashMap<>();
     synchronized String saveStatus(int index) { return saves.getOrDefault(index, ""); }
+    synchronized boolean isSaved(String id, int index) { return current.equals(id) && saved.contains(index); }
     synchronized String saveTargetInfo(String id, int index) {
         String raw = current.equals(id) ? urls.get(index) : null;
         if (raw == null) return "저장 주소를 확인하려면 다시 검사해 주세요.";
@@ -367,6 +370,9 @@ final class PreviewStore {
                     if (location == null || redirects == 3) throw new IOException("리디렉션 제한 초과");
                     String next = PreviewRules.requestUrl(URI.create(target).resolve(location).toString());
                     if (next.isEmpty()) throw new IOException("지원하지 않는 이미지 주소");
+                    if ("pbs.twimg.com".equalsIgnoreCase(URI.create(url).getHost())
+                            && (!"https".equalsIgnoreCase(URI.create(next).getScheme()) || !"pbs.twimg.com".equalsIgnoreCase(URI.create(next).getHost())))
+                        throw new IOException("지원하지 않는 이미지 주소");
                     connection.disconnect(); target = next; continue;
                 }
                 if (status != 200) throw new IOException("HTTP 오류 " + status);

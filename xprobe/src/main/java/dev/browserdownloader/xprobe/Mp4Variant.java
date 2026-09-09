@@ -7,7 +7,7 @@ public record Mp4Variant(String id, String url, int width, int height, double bi
     public static boolean permittedUrl(String url) {
         try {
             URI uri = new URI(url);
-            return "https".equals(uri.getScheme()) && "video.twimg.com".equals(uri.getHost())
+            return "https".equals(uri.getScheme()) && ("video.twimg.com".equals(uri.getHost()) || InstagramLink.mediaUrl(url))
                     && uri.getUserInfo() == null && uri.getPort() == -1;
         } catch (Exception e) { return false; }
     }

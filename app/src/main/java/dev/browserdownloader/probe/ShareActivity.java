@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
-/** One share target; route only validated X posts to the media popup. */
+/** One share target; route validated X and Instagram posts to the media popup. */
 public final class ShareActivity extends Activity {
     @Override public void onCreate(Bundle state) {
         super.onCreate(state);

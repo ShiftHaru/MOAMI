@@ -20,12 +20,14 @@ import java.util.*;
 
 public final class ChromeProbeService extends AccessibilityService {
     private final SharedPreferences.OnSharedPreferenceChangeListener preferenceListener = (prefs, key) -> {
-        if (!prefs.getBoolean("enabled", false) || ("xDrawerConsent".equals(key) && !prefs.getBoolean(key, false))) hideDrawer();
+        if (!prefs.getBoolean("enabled", false) || !prefs.getBoolean("chromeDrawer", true) || !SetupActivity.ready(this)) hideDrawer();
         ScanNotification.refresh(this);
     };
 
     private WindowManager windowManager;
     private LinearLayout drawer;
+    private WindowManager.LayoutParams drawerParams;
+    private float drawerFraction=.5f;
     private String drawerPackage = "";
     private TextView status;
     private boolean expanded;
@@ -58,8 +60,8 @@ public final class ChromeProbeService extends AccessibilityService {
         // Chrome briefly has no active root while its own page-info window closes.
         // The bounded lookup waits without input; real app changes and disabling still cancel it.
         if (root == null && addressLookup != null && ScanNotification.enabled(this) && !keyguard.isKeyguardLocked()) return;
-        String target = DrawerTarget.select(packageName, ScanNotification.enabled(this),
-                getSharedPreferences("probe", MODE_PRIVATE).getBoolean("xDrawerConsent", false), keyguard.isKeyguardLocked());
+        String target = DrawerTarget.select(packageName, ScanNotification.enabled(this) && SetupActivity.ready(this),
+                getSharedPreferences("probe", MODE_PRIVATE).getBoolean("chromeDrawer", true), keyguard.isKeyguardLocked());
         if (!target.isEmpty()) showDrawer(target);
         else hideDrawer();
     }
@@ -68,65 +70,67 @@ public final class ChromeProbeService extends AccessibilityService {
         if (drawer != null && target.equals(drawerPackage)) return;
         hideDrawer(); // Keep manual results while visiting the app or X.
         drawerPackage = target;
-        drawer = new LinearLayout(this);
+        android.content.Context themed = GalleryUi.overlay(this);
+        drawer = new LinearLayout(themed);
         drawer.setOrientation(LinearLayout.VERTICAL);
-        drawer.setPadding(8,8,8,8);
-        drawer.setBackgroundColor(0xffe8eef7);
-        Button handle = button("<");
+        EdgeHandle handle = new EdgeHandle(themed);
+        drawer.addView(handle);
+        drawerFraction=getSharedPreferences("probe",MODE_PRIVATE).getFloat("chromeDrawerPosition",.5f);
+        handle.setDrag(new EdgeHandle.Drag(){
+            private float original;
+            public void start(){original=drawerFraction;}
+            public void move(float delta){drawerFraction=HandlePosition.move(drawerFraction,delta,drawerHeight(),GalleryUi.dp(themed,112));positionDrawer();}
+            public void end(boolean cancelled){if(cancelled){drawerFraction=original;positionDrawer();}else getSharedPreferences("probe",MODE_PRIVATE).edit().putFloat("chromeDrawerPosition",drawerFraction).apply();}
+        });
+        drawer.addOnLayoutChangeListener((v,l,t,r,b,ol,ot,or,ob)->positionDrawer());
+        LinearLayout panel=GalleryUi.column(themed);
+        int pad=GalleryUi.dp(themed,16);
+        panel.setPadding(pad,pad,pad,pad);
+        panel.setBackground(GalleryUi.rounded(themed,24,GalleryUi.color(themed,com.google.android.material.R.attr.colorSurfaceContainer)));
+        int width=GalleryUi.dp(themed,Math.min(260,Math.max(48,getResources().getConfiguration().screenWidthDp-16)));
+        android.widget.ScrollView scroll=new android.widget.ScrollView(themed){
+            @Override protected void onMeasure(int w,int h){int max=GalleryUi.dp(getContext(),getResources().getConfiguration().screenHeightDp*8/10);super.onMeasure(w,MeasureSpec.makeMeasureSpec(max,MeasureSpec.AT_MOST));}
+        };
+        scroll.addView(panel);scroll.setBackground(panel.getBackground().getConstantState().newDrawable());scroll.setClipToOutline(true);
+        drawer.addView(scroll,new LinearLayout.LayoutParams(width,LinearLayout.LayoutParams.WRAP_CONTENT));
         handle.setOnClickListener(v -> {
-            expanded = !expanded;
-            for (int i = 1; i < drawer.getChildCount(); i++)
-                drawer.getChildAt(i).setVisibility(expanded ? android.view.View.VISIBLE : android.view.View.GONE);
-            handle.setText(expanded ? ">" : "<");
+            expanded = true;handle.setVisibility(android.view.View.GONE);scroll.setVisibility(android.view.View.VISIBLE);
         });
-        if (DrawerTarget.CHROME.equals(target)) {
-        Button scan = button("현재 탭 검사");
-        scan.setOnClickListener(v -> capture());
-        } else {
-            Button input = button("X 링크 입력하기");
-            input.setOnClickListener(v -> {
-                AccessibilityNodeInfo active = getRootInActiveWindow();
-                String current = active == null ? "" : String.valueOf(active.getPackageName());
-                if (active != null) active.recycle();
-                String valid = DrawerTarget.select(current, ScanNotification.enabled(this),
-                        getSharedPreferences("probe", MODE_PRIVATE).getBoolean("xDrawerConsent", false),
-                        ((KeyguardManager) getSystemService(KEYGUARD_SERVICE)).isKeyguardLocked());
-                if (!DrawerTarget.X.equals(valid)) { hideDrawer(); return; }
-                String message = DrawerTarget.openX(this);
-                if (status != null) status.setText(message);
-            });
-        }
-        if (DrawerTarget.X.equals(target)) { Button stop = button("중지");
-        stop.setOnClickListener(v -> {
-            ScanNotification.stop(this);
-            hideDrawer();
-        });
-        }
-        status = new TextView(this);
-        status.setText(DrawerTarget.X.equals(target)
-                ? "앱 내부 X 화면에서 직접 붙여넣기·다운로드\n알림 중지는 X 작업에도 적용됩니다."
-                : "스크롤 후 다시 검사하면 이미지 추가\n최근 결과에서 선택 저장");
-        status.setTextColor(0xff182738);
-        drawer.addView(status);
-        for (int i=1;i<drawer.getChildCount();i++) drawer.getChildAt(i).setVisibility(android.view.View.GONE);
+        panel.addView(GalleryUi.button(themed,"닫기 ›",()->{expanded=false;scroll.setVisibility(android.view.View.GONE);handle.setVisibility(android.view.View.VISIBLE);}));
+        Button scan=GalleryUi.button(themed,"현재 탭 검사",this::capture);GalleryUi.primary(scan);panel.addView(scan);
+        status=GalleryUi.text(themed,"스크롤 후 다시 검사하면 이미지 추가\n최근 결과에서 선택 저장",14);
+        status.setTextColor(GalleryUi.muted(themed));status.setAccessibilityLiveRegion(android.view.View.ACCESSIBILITY_LIVE_REGION_POLITE);panel.addView(status);
+        scroll.setVisibility(android.view.View.GONE);
         expanded = false;
         WindowManager.LayoutParams params = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.TYPE_ACCESSIBILITY_OVERLAY,
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, PixelFormat.TRANSLUCENT);
-        params.gravity = Gravity.RIGHT | Gravity.CENTER_VERTICAL;
+        params.gravity = Gravity.RIGHT | Gravity.TOP;
+        if(android.os.Build.VERSION.SDK_INT>=30){params.flags|=WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN;params.setFitInsetsTypes(0);}
+        params.y=drawerTop()+HandlePosition.top(drawerFraction,drawerHeight(),GalleryUi.dp(themed,112));
+        drawerParams=params;
         windowManager.addView(drawer,params);
     }
 
-    private Button button(String text) {
-        Button button = new Button(this);
-        button.setText(text);
-        drawer.addView(button);
-        return button;
+    private int drawerTop(){
+        if(android.os.Build.VERSION.SDK_INT>=30)return windowManager.getCurrentWindowMetrics().getWindowInsets().getInsetsIgnoringVisibility(android.view.WindowInsets.Type.systemBars()|android.view.WindowInsets.Type.displayCutout()).top;
+        return 0;
+    }
+    private int drawerHeight(){
+        if(android.os.Build.VERSION.SDK_INT>=30){var metrics=windowManager.getCurrentWindowMetrics();var insets=metrics.getWindowInsets().getInsetsIgnoringVisibility(android.view.WindowInsets.Type.systemBars()|android.view.WindowInsets.Type.displayCutout());return metrics.getBounds().height()-insets.top-insets.bottom;}
+        android.util.DisplayMetrics metrics=new android.util.DisplayMetrics();windowManager.getDefaultDisplay().getMetrics(metrics);return metrics.heightPixels;
+    }
+    private void positionDrawer(){
+        if(drawer==null||drawerParams==null||!drawer.isAttachedToWindow())return;
+        int top=drawerTop()+HandlePosition.top(drawerFraction,drawerHeight(),drawer.getHeight());
+        if(drawerParams.y!=top){drawerParams.y=top;windowManager.updateViewLayout(drawer,drawerParams);}
     }
 
+    @Override public void onConfigurationChanged(android.content.res.Configuration configuration){super.onConfigurationChanged(configuration);hideDrawer();}
+
     private AccessibilityNodeInfo chromeRoot() {
-        if (!getSharedPreferences("probe", MODE_PRIVATE).getBoolean("enabled", false) || !PreviewStore.consent(this)) return null;
+        if (!getSharedPreferences("probe", MODE_PRIVATE).getBoolean("enabled", false) || !PreviewStore.consent(this) || !SetupActivity.ready(this) || !getSharedPreferences("probe",0).getBoolean("chromeDrawer",true)) return null;
         if (((KeyguardManager) getSystemService(KEYGUARD_SERVICE)).isKeyguardLocked()) return null;
         AccessibilityNodeInfo root = getRootInActiveWindow();
         if (root != null && isChrome(root.getPackageName())) return root;
@@ -137,7 +141,7 @@ public final class ChromeProbeService extends AccessibilityService {
     private void capture() {
         cancelLookup();
         if (status != null) status.setText("Chrome 사이트 정보에서 전체 주소 확인 중");
-        addressLookup = new ChromePageAddress(this::chromeRoot, full -> {
+        addressLookup = new ChromePageAddress(this::chromeRoot, () -> performGlobalAction(GLOBAL_ACTION_BACK), full -> {
             addressLookup = null;
             if (full.isEmpty()) {
                 if (status != null) status.setText("전체 주소 확인 실패 · 원래 탭에서 다시 검사해 주세요.");
@@ -212,6 +216,7 @@ public final class ChromeProbeService extends AccessibilityService {
                     .put("chromeVersion", getPackageManager().getPackageInfo("com.android.chrome",0).versionName);
             NodeProbe.write(this, "latest.json", snapshot);
             previews.resultChanged();
+            GallerySession.get(this).chromeChanged();
             if (status != null) status.setText(message + "\n스크롤 후 다시 검사 · 전체/원본 미확인");
             ScanNotification.status(this, "수동 검사 · 누적 이미지 " + collectedNodes.length() + "개");
             hideDrawer();
@@ -241,8 +246,10 @@ public final class ChromeProbeService extends AccessibilityService {
         cancelLookup();
 
         if (drawer != null) {
-            windowManager.removeView(drawer);
+            LinearLayout old=drawer;
             drawer = null;
+            drawerParams=null;
+            windowManager.removeView(old);
             status = null;
         }
         drawerPackage = "";

@@ -5,10 +5,8 @@ import android.content.Intent;
 
 final class DrawerTarget {
     static final String CHROME = "com.android.chrome", X = "com.twitter.android";
-    static String select(String packageName, boolean enabled, boolean xAllowed, boolean locked) {
-        if (!enabled || locked) return "";
-        if (CHROME.equals(packageName)) return CHROME;
-        return xAllowed && X.equals(packageName) ? X : "";
+    static String select(String packageName, boolean enabled, boolean drawerEnabled, boolean locked) {
+        return enabled && drawerEnabled && !locked && CHROME.equals(packageName) ? CHROME : "";
     }
     static String openX(Context context) {
         try {

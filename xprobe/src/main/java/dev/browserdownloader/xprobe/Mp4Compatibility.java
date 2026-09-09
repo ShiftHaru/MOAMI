@@ -16,7 +16,7 @@ public final class Mp4Compatibility implements AutoCloseable {
         List<Long> flags = new ArrayList<>();
         try (RandomAccessFile input = new RandomAccessFile(source, "r")) {
             if (input.length() > 500L * 1024 * 1024) throw new IOException("MP4 시험 한도 500 MiB 초과");
-            scan(input, 0, input.length(), 0, flags, new int[]{0});
+            scan(input, 0, input.length(), 0, flags, new int[]{0}, null);
         }
         if (flags.isEmpty()) return new Mp4Compatibility(source, source);
         File copy = File.createTempFile("mp4-decode-", ".mp4", source.getParentFile());
@@ -34,8 +34,19 @@ public final class Mp4Compatibility implements AutoCloseable {
         } finally { if (!ready) Files.deleteIfExists(copy.toPath()); }
     }
 
+    /** Read track handler types from the actual container; silence in an audio track still counts. */
+    public static boolean hasAudioTrack(File source) throws IOException, InterruptedException {
+        List<String> handlers = new ArrayList<>();
+        try (RandomAccessFile input = new RandomAccessFile(source, "r")) {
+            if (input.length() > 500L * 1024 * 1024) throw new IOException("MP4 시험 한도 500 MiB 초과");
+            scan(input, 0, input.length(), 0, new ArrayList<>(), new int[]{0}, handlers);
+        }
+        if (!handlers.contains("vide")) throw new IOException("MP4 오디오 트랙 판별 실패");
+        return handlers.contains("soun");
+    }
+
     private static void scan(RandomAccessFile input, long start, long end, int depth,
-                             List<Long> flags, int[] boxes) throws IOException, InterruptedException {
+                             List<Long> flags, int[] boxes, List<String> handlers) throws IOException, InterruptedException {
         for (long p = start; p < end;) {
             interrupted();
             if (++boxes[0] > 10000 || end - p < 8) throw new IOException("MP4 구조 검증 실패");
@@ -47,8 +58,24 @@ public final class Mp4Compatibility implements AutoCloseable {
             if (size == 1) { if (end - p < 16) throw new IOException("MP4 구조 검증 실패"); size = input.readLong(); header = 16; }
             if (size == 0) size = end - p;
             if (size < header || size > end - p) throw new IOException("MP4 구조 검증 실패");
+            if (handlers != null && depth == 3 && name.equals("hdlr")) {
+                if(size < header + 24) throw new IOException("MP4 오디오 트랙 판별 실패");
+                input.seek(p + header);
+                if(input.readInt() != 0) throw new IOException("MP4 오디오 트랙 판별 실패");
+                input.skipBytes(4);
+                byte[] handler = new byte[4]; input.readFully(handler);
+                String handlerType = new String(handler, java.nio.charset.StandardCharsets.US_ASCII);
+                if(!handlerType.equals("vide") && !handlerType.equals("soun"))
+                    throw new IOException("MP4 오디오 트랙 판별 실패");
+                handlers.add(handlerType);
+            }
             if (name.equals(PATH[depth])) {
-                if (depth < PATH.length - 1) scan(input, p + header, p + size, depth + 1, flags, boxes);
+                if (depth < PATH.length - 1) {
+                    int before = handlers == null ? 0 : handlers.size();
+                    scan(input, p + header, p + size, depth + 1, flags, boxes, handlers);
+                    if(handlers != null && depth == 1 && handlers.size() != before + 1)
+                        throw new IOException("MP4 오디오 트랙 판별 실패");
+                }
                 else {
                     if (size < header + 8) throw new IOException("MP4 구조 검증 실패");
                     input.seek(p + header);

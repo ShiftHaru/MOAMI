@@ -7,6 +7,29 @@ import java.nio.file.Files;
 import static org.junit.Assert.*;
 
 public class Mp4CompatibilityTest {
+    private byte[] track(String handler) {
+        byte[] payload=ByteBuffer.allocate(24).putLong(0).put(handler.getBytes(java.nio.charset.StandardCharsets.US_ASCII)).array();
+        return box("trak",box("mdia",box("hdlr",payload)));
+    }
+    @Test public void audioPresenceUsesTrackNotVolumeAndRejectsUnknown() throws Exception {
+        File file=File.createTempFile("mp4-audio-", ".mp4");
+        try {
+            Files.write(file.toPath(),box("moov",track("vide")));
+            assertFalse(Mp4Compatibility.hasAudioTrack(file));
+            ByteArrayOutputStream tracks=new ByteArrayOutputStream();tracks.write(track("vide"));tracks.write(track("soun"));
+            Files.write(file.toPath(),box("moov",tracks.toByteArray()));
+            assertTrue(Mp4Compatibility.hasAudioTrack(file));
+            tracks.write(box("trak",box("mdia",new byte[0])));
+            Files.write(file.toPath(),box("moov",tracks.toByteArray()));
+            assertThrows(IOException.class,()->Mp4Compatibility.hasAudioTrack(file));
+            Files.write(file.toPath(),box("moov",track("xxxx")));
+            assertThrows(IOException.class,()->Mp4Compatibility.hasAudioTrack(file));
+            Files.write(file.toPath(),box("mdat","soun".getBytes()));
+            assertThrows(IOException.class,()->Mp4Compatibility.hasAudioTrack(file));
+            Files.write(file.toPath(),new byte[]{0,0,0,4,109,111,111,118});
+            assertThrows(IOException.class,()->Mp4Compatibility.hasAudioTrack(file));
+        } finally { Files.deleteIfExists(file.toPath()); }
+    }
     private byte[] box(String type, byte[] payload) {
         return ByteBuffer.allocate(payload.length+8).putInt(payload.length+8)
             .put(type.getBytes(java.nio.charset.StandardCharsets.US_ASCII)).put(payload).array();
