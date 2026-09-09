@@ -37,6 +37,7 @@ complete corresponding-source package for the Android binaries**:
 | Wrapper 0.18.1 sources JAR | Exact Maven coordinate | Native code is not supplied by this JAR |
 | CPython 3.12.11 | Official versioned source and LICENSE | Android patches, build recipe and transitive native source mapping |
 | QuickJS 2025-04-26 | Version identified by upstream maintainer in PR 338; official source and LICENSE | Exact Android changes and build inputs |
+| Readline 8.3 / GDBM 1.26 / Expat 2.7.3 / OpenSSL 3.5.2 | Packaged filename/version strings, official archives and original notices | Android changes, applied patches and exact build inputs |
 
 Evidence:
 - https://github.com/yausername/youtubedl-android/pull/338
@@ -53,10 +54,11 @@ Either obtain the actual upstream build inputs or replace the bundle with a
 documented build from known sources and retest the app. Merely downloading a
 similarly numbered source release does not close this requirement.
 
-Also inspect the final APK signing certificate subject: certificate identity is
-public metadata. Use an approved public identity; changing an existing signing key
-affects updates and must not be done silently. Private keys must never accompany
-either the APK or source package.
+The owner explicitly approved publication of the existing APK signing certificate
+on 2026-09-09. Keep the current signing key for update compatibility. This approval
+covers public certificate metadata only: private keys and signing passwords must
+never accompany either the APK or source package. Personal Git identity and local
+paths remain excluded. Recheck the final APK signature before release.
 
 Keep `apkDistributionReady` false until these checks and the complete packaged
 notice review are finished. Source hosting, content permissions, trademark/art

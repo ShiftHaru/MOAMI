@@ -25,6 +25,38 @@
       "bytes": 11451,
       "scope": "Wrapper Java/Kotlin sources; not native corresponding source",
       "sourceFiles": 13
+    },
+    {
+      "file": "readline-8.3.tar.gz",
+      "url": "https://ftp.gnu.org/gnu/readline/readline-8.3.tar.gz",
+      "sha256": "fe5383204467828cd495ee8d1d3c037a7eba1389c22bc6a041f627976f9061cc",
+      "bytes": 3419642,
+      "scope": "Version candidate from packaged library name or version string; Android patch/build correspondence remains unverified",
+      "notice": "xprobe/src/main/assets/licenses/readline-LICENSE.txt"
+    },
+    {
+      "file": "gdbm-1.26.tar.gz",
+      "url": "https://ftp.gnu.org/gnu/gdbm/gdbm-1.26.tar.gz",
+      "sha256": "6a24504a14de4a744103dcb936be976df6fbe88ccff26065e54c1c47946f4a5e",
+      "bytes": 1226591,
+      "scope": "Version candidate from packaged library name or version string; Android patch/build correspondence remains unverified",
+      "notice": "xprobe/src/main/assets/licenses/gdbm-LICENSE.txt"
+    },
+    {
+      "file": "expat-2.7.3.tar.xz",
+      "url": "https://github.com/libexpat/libexpat/releases/download/R_2_7_3/expat-2.7.3.tar.xz",
+      "sha256": "71df8f40706a7bb0a80a5367079ea75d91da4f8c65c58ec59bcdfbf7decdab9f",
+      "bytes": 504744,
+      "scope": "Version candidate from packaged library name or version string; Android patch/build correspondence remains unverified",
+      "notice": "xprobe/src/main/assets/licenses/expat-LICENSE.txt"
+    },
+    {
+      "file": "openssl-3.5.2.tar.gz",
+      "url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.2/openssl-3.5.2.tar.gz",
+      "sha256": "c53a47e5e441c930c3928cf7bf6fb00e5d129b630e0aa873b08258656e7345ec",
+      "bytes": 53180161,
+      "scope": "Version candidate from packaged library name or version string; Android patch/build correspondence remains unverified",
+      "notice": "xprobe/src/main/assets/licenses/openssl-LICENSE.txt"
     }
   ]
 }

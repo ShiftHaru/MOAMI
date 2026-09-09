@@ -22,6 +22,14 @@ def private_patterns():
     result = subprocess.run(['git', 'config', '--global', '--get', 'user.email'], capture_output=True)
     if result.returncode == 0:
         identities.append(result.stdout.decode().strip())
+    signing = Path(os.environ.get('BROWSERDOWNLOADER_SIGNING_PROPERTIES',
+                                 str(Path.home() / 'keyStore/signing.properties')))
+    if signing.is_file():
+        # Only compare secret values; never report them or their source path.
+        for line in signing.read_text(encoding='utf-8-sig').splitlines():
+            match = re.match(r'\s*(?:storePassword|keyPassword)\s*[=:]\s*(.+)', line)
+            if match:
+                patterns.append(re.escape(match[1].encode()))
     patterns.extend(re.escape(v.encode()) for v in identities if len(v) >= 4 and not v.endswith('.invalid'))
     return patterns
 

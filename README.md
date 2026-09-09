@@ -81,6 +81,10 @@ python -m unittest discover -s tools -p 'test_*.py'
 `ytdlp`는 고정된 상류 zipimport 리소스입니다. 출처와 해시는 고지 문서에 기록합니다.
 # Release signing
 
+Before publishing, follow [source and APK release checks](third_party/RELEASE_CHECKS.md).
+Run `python tools/check_public_tree.py` on the final publication branch. Acquired
+upstream sources and notices do not yet close the Android native source gate.
+
 `app` release builds read UTF-8 Java properties from
 `~/keyStore/signing.properties`, or the file specified by
 `BROWSERDOWNLOADER_SIGNING_PROPERTIES`. Required fields: `storeFile`,
