@@ -1,0 +1,327 @@
+{
+  "repository": "https://github.com/termux/termux-packages",
+  "commit": "4af4053b0a94ac28a035159d3f425e0c32b8944f",
+  "status": "candidate-not-built",
+  "matchesExistingApk": false,
+  "explanation": "Chosen near the observed build date for investigation. Date proximity and matching Python version do not prove binary correspondence.",
+  "packages": [
+    {
+      "package": "python",
+      "declaredVersionExpression": "\"3.12.11\"",
+      "files": [
+        {
+          "path": "packages/python/0001-fix-hardcoded-paths.patch",
+          "sha256": "f8d3070be5d3e748fdc2a2bad0c44e0359c70cb73f8411f0168f7d647c37328d"
+        },
+        {
+          "path": "packages/python/0002-no-setuid-servers.patch",
+          "sha256": "6ed46a21d8c1f38975db645f1bf1d71a5084b8382d73f1579f9d54b880875426"
+        },
+        {
+          "path": "packages/python/0003-ctypes-util-use-llvm-tools.patch",
+          "sha256": "fbc100b4baf31587b1a53735b6c53607157e3e408da46e861459301cc94dafa5"
+        },
+        {
+          "path": "packages/python/0004-impl-getprotobyname.patch",
+          "sha256": "d7de4856f777ee48894221180d1f96d8b39290feb296d78bdaf61a1db21e6938"
+        },
+        {
+          "path": "packages/python/0005-impl-multiprocessing.patch",
+          "sha256": "879dc5ae890814d291877b3f27dd0790b4d382938553bac2ecb8d4c0e112b420"
+        },
+        {
+          "path": "packages/python/0006-do-not-use-xattr.patch",
+          "sha256": "45e540312e8a79aec02a94e8afb2b2ad8d7c76f7e159561b24d37ac810da988b"
+        },
+        {
+          "path": "packages/python/0007-disable-multiarch.patch",
+          "sha256": "0a8c84345d250b254eccc3917c265d223dcfddf2573952a988eef461c7b589db"
+        },
+        {
+          "path": "packages/python/0008-do-not-use-link.patch",
+          "sha256": "1401055ed40a940c022398586b460938d2cffc627d8fbaeefcb55095498f9875"
+        },
+        {
+          "path": "packages/python/0009-build-with-fPIC.patch",
+          "sha256": "7eff1f7c330babbd0084deed5de80a95d25376264947671e932e23e653be9d98"
+        },
+        {
+          "path": "packages/python/0010-link-modules-against-libpython.patch",
+          "sha256": "f8b8f6d52886ff0765f1744736f8b208f9c00fce2b0185a5be7a61aca797b4a9"
+        },
+        {
+          "path": "packages/python/build.sh",
+          "sha256": "03987be92edb12240f11947ffd387434ad0da9de9168b9ffdfc5c649b11b1db7"
+        },
+        {
+          "path": "packages/python/python-ensurepip-wheels.subpackage.sh",
+          "sha256": "011a3598b8a70e4cd8e47bc30bf1f721f78638d56b867b2c4a9bf3b99b821959"
+        },
+        {
+          "path": "packages/python/python-tkinter.subpackage.sh",
+          "sha256": "f993701621aa807a73fb8e62ae4660fadc366648d3ec26efc5f5c51b9cac0c8b"
+        }
+      ]
+    },
+    {
+      "package": "gdbm",
+      "declaredVersionExpression": "\"1.26\"",
+      "files": [
+        {
+          "path": "packages/gdbm/build.sh",
+          "sha256": "ef44697164fd19b8433ceb9ac4cd35cd88eb99ed51b39fb6f8958f87c9db7b2a"
+        }
+      ]
+    },
+    {
+      "package": "libandroid-posix-semaphore",
+      "declaredVersionExpression": "0.1",
+      "files": [
+        {
+          "path": "packages/libandroid-posix-semaphore/LICENSE",
+          "sha256": "e239ef69c9c4eead9406bdc6a34f2bd1220c3dcd3b17c8377cb2fb73fdaf0d38"
+        },
+        {
+          "path": "packages/libandroid-posix-semaphore/build.sh",
+          "sha256": "063f2e0d0eae189b12fe98b0356eaffe9256ac2e90b03a7425b28027459f2c47"
+        },
+        {
+          "path": "packages/libandroid-posix-semaphore/semaphore.c",
+          "sha256": "333e0027667d8a82568fbe5617b1ef381a8c6a920d1a44a07570fb695a302253"
+        }
+      ]
+    },
+    {
+      "package": "libandroid-support",
+      "declaredVersionExpression": "(29",
+      "files": [
+        {
+          "path": "packages/libandroid-support/build.sh",
+          "sha256": "1f88db1f66fd8bf4fac3e610f51904c11915d56d53853802102bfc7d3ecf22dc"
+        }
+      ]
+    },
+    {
+      "package": "libbz2",
+      "declaredVersionExpression": "1.0.8",
+      "files": [
+        {
+          "path": "packages/libbz2/build.sh",
+          "sha256": "a0d3d0b51956aeb82d0c6f5f9feed6995ad5502b306fa29cd09b8d2bff20440e"
+        },
+        {
+          "path": "packages/libbz2/bzdiff.patch",
+          "sha256": "902b0f4a278fbcac261e54b1ffaca0179a130bdd8a0187250f71c4a9c82f0609"
+        },
+        {
+          "path": "packages/libbz2/bzip2.subpackage.sh",
+          "sha256": "d6b23cb24dcd8b90bdf1b97514ece79ef270effcc3369b340ef5c91b92a522b1"
+        },
+        {
+          "path": "packages/libbz2/cross_compile.patch",
+          "sha256": "d7ca692d52d90a58d769072d3aa3d4b61ff7c1f7001ca0920cd63e3ae6ccaead"
+        },
+        {
+          "path": "packages/libbz2/shared_library.patch",
+          "sha256": "6d6efadc90fdc14ec2ccf5556bd60142d8cc660b5a4e37b9cfee53ece64ee8e9"
+        }
+      ]
+    },
+    {
+      "package": "libcrypt",
+      "declaredVersionExpression": "0.2",
+      "files": [
+        {
+          "path": "packages/libcrypt/LICENSE",
+          "sha256": "311ad021879eeb7713e27e8d894950068689feafc198a236a95c2494710e3a1a"
+        },
+        {
+          "path": "packages/libcrypt/build.sh",
+          "sha256": "8d3d827030f2d51687dcf7fcb1a7dce8f79730bdbefbd5b90492def19ea43629"
+        },
+        {
+          "path": "packages/libcrypt/crypt.h",
+          "sha256": "978bed04a208284a96090db3aafff5075a17b5b54be695e4e1eaa4a414684d7c"
+        },
+        {
+          "path": "packages/libcrypt/crypt3.c",
+          "sha256": "65009358f59f91b6118fc456bfe8186fc432d6c06af86c2346096e56079593c0"
+        }
+      ]
+    },
+    {
+      "package": "libexpat",
+      "declaredVersionExpression": "\"2.7.1\"",
+      "files": [
+        {
+          "path": "packages/libexpat/build.sh",
+          "sha256": "6b5d53d0d4ec3a6dd72e5fb76a6b9d0ede9872b50ef1b638f7b197801242a06c"
+        }
+      ]
+    },
+    {
+      "package": "libffi",
+      "declaredVersionExpression": "\"3.4.7\"",
+      "files": [
+        {
+          "path": "packages/libffi/build.sh",
+          "sha256": "91e9df3eb99ba771d443a9d416b3ce427800f8260616b70e0aac07cf1067aa6d"
+        }
+      ]
+    },
+    {
+      "package": "liblzma",
+      "declaredVersionExpression": "\"5.8.1\"",
+      "files": [
+        {
+          "path": "packages/liblzma/build.sh",
+          "sha256": "699e3985a21601de1b44fbe4ec811502bffeda21364ed2c9e159ea93266e1dd0"
+        },
+        {
+          "path": "packages/liblzma/configure.patch",
+          "sha256": "191c185d63037483059bf3817d64cb0471c30c7b85fd31d76e02d57708410f08"
+        },
+        {
+          "path": "packages/liblzma/xz-utils.subpackage.sh",
+          "sha256": "b25e036e06f5c5a8b0e1fa17b20bb50e442fad63f9245c953972a25919cebd8e"
+        }
+      ]
+    },
+    {
+      "package": "libsqlite",
+      "declaredVersionExpression": "\"3.50.4\"",
+      "files": [
+        {
+          "path": "packages/libsqlite/backport-tool-buildtclext.tcl.patch",
+          "sha256": "342e91c1839f420ed450af47915e45b8085e64b4e46b15b54d071f26bf19ed64"
+        },
+        {
+          "path": "packages/libsqlite/build.sh",
+          "sha256": "18211740bd843ca1d0e0c46ddfda6842fd103398e16357395b79228639e47701"
+        },
+        {
+          "path": "packages/libsqlite/libsqlite-tcl.subpackage.sh",
+          "sha256": "8ff82de9d693d912ea0af38ed73d06d94c8f525ebd1d91406a8576d203a8c0ff"
+        },
+        {
+          "path": "packages/libsqlite/sqlite.subpackage.sh",
+          "sha256": "d0abac19a3a2d932b29f94288f10820964fbac4696a7e038ee32f794b87b2bf1"
+        },
+        {
+          "path": "packages/libsqlite/src-os_unix.c.patch",
+          "sha256": "633f8482308380dae0e2f820576ac3c9a28c4441c6b891ce7908ae3a1d53fa46"
+        },
+        {
+          "path": "packages/libsqlite/src-tclsqlite.patch",
+          "sha256": "1b8236943b965329bbb6c6cd63992e370d04dc0383a89a0cb6e412e799ecc093"
+        }
+      ]
+    },
+    {
+      "package": "ncurses",
+      "declaredVersionExpression": "(6.5.20240831",
+      "files": [
+        {
+          "path": "packages/ncurses/build.sh",
+          "sha256": "d5b2d659ec52e04aeb66e0b6ad75939a935c297be290548317e95e69b62f347c"
+        },
+        {
+          "path": "packages/ncurses/fix-paths.patch",
+          "sha256": "4b2565c057d8b97fa64aeee32b376fd72f5bc48c2c9eafb9ce37799d4ada7a10"
+        },
+        {
+          "path": "packages/ncurses/ncurses-tinfo-lib_setup.c.patch",
+          "sha256": "2e03294631c3c2835c9818dbf8c6a02e83e0ec7ce2e0dd81601ba24f8d382812"
+        },
+        {
+          "path": "packages/ncurses/ncurses-tinfo-tinfo_driver.c.patch",
+          "sha256": "abcf8b13b4690bb1af16ef2de1fc5da238f1350d0fcf9b24fe3af11d670c15b8"
+        },
+        {
+          "path": "packages/ncurses/ncurses-ui-libs-static.subpackage.sh",
+          "sha256": "bb6945f87908ef37f09567b4be65f6afa8cb1a4561a2c81ad674268227c24f8b"
+        },
+        {
+          "path": "packages/ncurses/ncurses-ui-libs.subpackage.sh",
+          "sha256": "a1ed7e1aa01e0f87e5a23f7df0ff8efa11fc7740201191862ac6e56dcc44581e"
+        },
+        {
+          "path": "packages/ncurses/ncurses-utils.subpackage.sh",
+          "sha256": "6b2a4a4653fa5a93b7ae7ae685260b97f3f6c699cecf439d2c659d3637355516"
+        }
+      ]
+    },
+    {
+      "package": "openssl",
+      "declaredVersionExpression": "1:3.5.2",
+      "files": [
+        {
+          "path": "packages/openssl/Configurations-15-android.conf.patch",
+          "sha256": "0f83680bc4881a2b279dd1ab43045a3e0beeae155d60b4f5beafe43c3e06a1a8"
+        },
+        {
+          "path": "packages/openssl/add-trusted-certificate",
+          "sha256": "1ac567dee4860ed2f48d2dc4e7202e5354b04d5fe9e90235dc0a3e4f4383fb0a"
+        },
+        {
+          "path": "packages/openssl/build.sh",
+          "sha256": "4ccbf70d6135df8941b144b7e82e40f9c6546a5ac6566d3608c2e282bff0ac48"
+        },
+        {
+          "path": "packages/openssl/include-crypto-rand.h.patch",
+          "sha256": "daefc56e087506a6eb10d1446be54290ccc1ee52dc31eb6fc3c6f91699a43bd9"
+        },
+        {
+          "path": "packages/openssl/openssl-tool.subpackage.sh",
+          "sha256": "77ce3c5aa2abd3c69da8ad98b7d482d78608414a6609e4ded438c7de3a140018"
+        }
+      ]
+    },
+    {
+      "package": "readline",
+      "declaredVersionExpression": "$_MAIN_VERSION.$_PATCH_VERSION",
+      "files": [
+        {
+          "path": "packages/readline/build.sh",
+          "sha256": "e1e1f72714e865302deb4c124b71310c1b295bc6b187bc5d9a16044d45ed169a"
+        },
+        {
+          "path": "packages/readline/inputrc",
+          "sha256": "b0a4858741eea53f525b76d1e70fd4f1aaa722b4517fefcedf74849d3629160e"
+        },
+        {
+          "path": "packages/readline/rlconf.h.patch",
+          "sha256": "80cc44a3062a4fa5184a475aabf6958447ae3fd8513479274734cf819884ed47"
+        }
+      ]
+    },
+    {
+      "package": "zlib",
+      "declaredVersionExpression": "\"1.3.1\"",
+      "files": [
+        {
+          "path": "packages/zlib/build.sh",
+          "sha256": "ef4a67b510e20b48c55dac0f27484a42184d0fc195e3846c41ef818c9d7b09b4"
+        },
+        {
+          "path": "packages/zlib/force-support-shared-library.patch",
+          "sha256": "9f1f63931ac4738747c93d852f351c6c46ecafccea0127f01498e48cb17f50c2"
+        }
+      ]
+    },
+    {
+      "package": "quickjs",
+      "declaredVersionExpression": "1:${_YEAR}${_MONTH}${_DAY}",
+      "files": [
+        {
+          "path": "packages/quickjs/Makefile.patch",
+          "sha256": "1b5cab68c6cf9ad8d9811b6c84f97838fa0e012962ad3dcf37b855bdb290cfd5"
+        },
+        {
+          "path": "packages/quickjs/build.sh",
+          "sha256": "fbb8ca16214bbe4609a5c257606c2dfa2da4c7a539976454c98053cc3a7e9c8a"
+        }
+      ]
+    }
+  ]
+}

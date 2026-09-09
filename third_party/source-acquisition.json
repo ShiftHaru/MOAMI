@@ -57,6 +57,13 @@
       "bytes": 53180161,
       "scope": "Version candidate from packaged library name or version string; Android patch/build correspondence remains unverified",
       "notice": "xprobe/src/main/assets/licenses/openssl-LICENSE.txt"
+    },
+    {
+      "file": "termux-packages-4af4053.tar.gz",
+      "url": "https://codeload.github.com/termux/termux-packages/tar.gz/4af4053b0a94ac28a035159d3f425e0c32b8944f",
+      "sha256": "404b47192351d5f934fa0a71e9a98924f09ac30bc0436e639e7efb8058af9bc1",
+      "bytes": 8212637,
+      "scope": "Candidate rebuild recipes and patches; NOT established as the existing APK binary builder revision"
     }
   ]
 }
