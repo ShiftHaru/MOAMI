@@ -89,6 +89,8 @@
 <a id="build"></a>
 ## 직접 빌드하기
 
+0.33.3부터 [대응 소스 빌드 안내](third_party/BUILDING_SOURCE_RELEASE.md)에 따라 네이티브 런타임을 먼저 준비합니다. `MOAMI_NATIVE_RUNTIME` 환경변수에 생성된 런타임 폴더의 절대 경로를 지정하세요. 대응 소스 배포 묶음의 `prebuilt-native/`도 사용할 수 있으며, 빌드 시 고정된 해시를 검증합니다.
+
 저장소를 내려받고 루트 폴더에서 실행합니다. 아래는 Windows에서 확인한 환경입니다.
 
 | 구성 | 버전 |
@@ -143,7 +145,7 @@ UTF-8 Java properties 형식으로 `storeFile`, `storePassword`, `keyAlias`, `ke
 
 산출물: `app/build/outputs/apk/release/app-release.apk`
 
-`0.33.2-full`은 모든 기능을 포함하며 기존 앱을 업데이트합니다. X·Instagram 전용 `0.33.2-share`는 아래 명령으로 따로 빌드합니다.
+`0.33.3-full`은 모든 기능을 포함하며 기존 앱을 업데이트합니다. X·Instagram 전용 `0.33.3-share`는 아래 명령으로 따로 빌드합니다.
 
 ```powershell
 .\gradlew.bat :app:assembleRelease -PmoamiShare=true --no-configuration-cache
@@ -184,9 +186,9 @@ Python 검사 도구에는 별도의 Python 실행 환경이 필요합니다. �
 
 ## 개발 상태와 참여
 
-현재 앱 버전은 `0.33.2-full` / `0.33.2-share`입니다. 작은 설정 화면 아이콘에서도 캐릭터가 표시되도록 크기에 비례한 여백을 적용했습니다. Chrome 사이트 정보 창의 닫기 버튼이 없는 경우를 처리하는 수정은 포함됐으며, 해당 문제 기기의 수정 후 실사용 확인은 대기 중입니다. 모든 지원 기기·사이트의 검증이 끝난 상태는 아닙니다.
+현재 앱 버전은 `0.33.3-full` / `0.33.3-share`입니다. 작은 설정 화면 아이콘에서도 캐릭터가 표시되도록 크기에 비례한 여백을 적용했습니다. Chrome 사이트 정보 창의 닫기 버튼이 없는 경우를 처리하는 수정은 포함됐으며, 해당 문제 기기의 수정 후 실사용 확인은 대기 중입니다. 모든 지원 기기·사이트의 검증이 끝난 상태는 아닙니다.
 
-ARM64 Python·QuickJS의 소스 빌드는 완료했지만, 새 런타임의 APK 통합과 실기기 회귀 검증은 남아 있습니다. APK 공개 전 필요한 대응 소스·고지 검토는 [네이티브 소스 확인 현황](third_party/NATIVE_SOURCE_GAPS.md)에 정리합니다.
+ARM64 Python·QuickJS를 확인 가능한 소스 빌드로 교체했습니다. 실기기에서 X GIF·Instagram 저장과 변환 검사를 통과했습니다. APK 공개 전 필요한 대응 소스·고지 검토는 [네이티브 소스 확인 현황](third_party/NATIVE_SOURCE_GAPS.md)에 정리합니다.
 
 문제를 제보할 때는 앱 버전, Android 버전, 재현 순서, 기대한 결과와 실제 결과를 함께 알려주세요. 로그·스크린샷에서 개인 콘텐츠와 계정 정보, 쿠키·토큰·인증 URL을 제거하세요. 개발 작업의 기록 절차는 [AGENTS.md](AGENTS.md)를 참고하세요.
 

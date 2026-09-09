@@ -1,6 +1,6 @@
 {
-  "version": "0.32.0-chrome-page-info",
-  "scope": "Resolved debug runtime artifacts plus desugaring input; not a complete APK source audit",
+  "version": "0.33.3",
+  "scope": "62 resolved Maven runtime artifacts and desugaring input; source receipts in the corresponding source release",
   "artifacts": [
     {
       "coordinate": "androidx.activity:activity:1.8.0",
@@ -203,18 +203,6 @@
       "sha256": "147af4e14a1984010d8f155e5e19d781f03c1d70dfed02a8e0d18428b8fc8682"
     },
     {
-      "coordinate": "com.fasterxml.jackson.core:jackson-annotations:2.11.1",
-      "sha256": "045e61b0b4a347d12b86cf2d0e776dea6a79204ae12095c2b08906d29e594a5a"
-    },
-    {
-      "coordinate": "com.fasterxml.jackson.core:jackson-core:2.11.1",
-      "sha256": "25461dbfb431cb48e30118a0277671de8e8a56a3b1198492e24b2fb605d7575e"
-    },
-    {
-      "coordinate": "com.fasterxml.jackson.core:jackson-databind:2.11.1",
-      "sha256": "b486be39d9ff4ae8bc7782792f2ea70f3a7bdaee5bd13780d295d7674231afd6"
-    },
-    {
       "coordinate": "com.google.android.material:material:1.14.0",
       "sha256": "19e8fab43df6870f8e4322059624384be0279da56dc910529ff591dc674008cd"
     },
@@ -229,22 +217,6 @@
     {
       "coordinate": "com.squareup:gifencoder:0.10.1",
       "sha256": "ee1a938b897ea68b9cfa6813edf361f0aa69ed363eed96f91bf3811eacd2053e"
-    },
-    {
-      "coordinate": "commons-io:commons-io:2.5",
-      "sha256": "a10418348d234968600ccb1d988efcbbd08716e1d96936ccc1880e7d22513474"
-    },
-    {
-      "coordinate": "io.github.junkfood02.youtubedl-android:common:0.18.1",
-      "sha256": "e0c0530bdbdf203e1598e900085d3582e27360731872872f3a67f23a9b24c0b5"
-    },
-    {
-      "coordinate": "io.github.junkfood02.youtubedl-android:library:0.18.1",
-      "sha256": "579b5fb480892b1abc2b218c2089699d52759cc8d7ba256bf876453f0365faef"
-    },
-    {
-      "coordinate": "org.apache.commons:commons-compress:1.12",
-      "sha256": "2c1542faf343185b7cab9c3d55c8ae5471d6d095d3887a4adefdbdf2984dc0b6"
     },
     {
       "coordinate": "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.22",

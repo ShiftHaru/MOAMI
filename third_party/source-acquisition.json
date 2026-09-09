@@ -71,6 +71,28 @@
       "sha256": "ab5a03176ee106d3f0fa90e381da478ddae405918153cca248e682cd0c4a2269",
       "bytes": 810029,
       "scope": "Official bzip2 archive for replacement native build; old mirror returns HTTP500"
+    },
+    {
+      "file": "yt-dlp-2026.08.19.tar.gz",
+      "url": "https://codeload.github.com/yt-dlp/yt-dlp/tar.gz/refs/tags/2026.08.19",
+      "sha256": "a0779c45179a846986a852bce31bddbe9259b594574f75c0ec146d0567058f7e",
+      "bytes": 3113910,
+      "scope": "0.33.3 replacement source release"
+    },
+    {
+      "file": "desugar_jdk_libs-2.1.5.tar.gz",
+      "url": "https://codeload.github.com/google/desugar_jdk_libs/tar.gz/73170c3",
+      "sha256": "8bdbbff862c32cfce4f3a9d73cacb2e4389b240b33eff0bdf1e26c0bddcc7fba",
+      "bytes": 18240256,
+      "scope": "0.33.3 replacement source release"
     }
-  ]
+  ],
+  "scope": "Legacy acquisition receipts plus replacement inputs. See replacement for 0.33.3; no claim for 0.33.2.",
+  "replacement": {
+    "version": "0.33.3-full/share",
+    "runtimeLock": "native-runtime-lock.json",
+    "buildInstructions": "BUILDING_SOURCE_RELEASE.md",
+    "sourceBundleRequired": true,
+    "old0332Covered": false
+  }
 }

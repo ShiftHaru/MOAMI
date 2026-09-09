@@ -14,11 +14,13 @@ public final class RuntimeTest extends Instrumentation {
     private String xLink;
     private boolean downloadX;
     private boolean repeat;
+    private String instagramLink;
     @Override public void onCreate(Bundle arguments) {
         super.onCreate(arguments);
         xLink = arguments == null ? null : arguments.getString("xLink");
         downloadX = arguments != null && "true".equals(arguments.getString("downloadX"));
         repeat = arguments != null && "true".equals(arguments.getString("repeat"));
+        instagramLink = arguments == null ? null : arguments.getString("instagramLink");
         start();
     }
     @Override public void onStart() {
@@ -59,7 +61,16 @@ public final class RuntimeTest extends Instrumentation {
                 catch (Exception e) { report.put("xError", e.getMessage()); }
                 catch (AssertionError e) { report.put("xError", e.getMessage()); }
             }
-            boolean passed = !report.has("fixtureError") && !report.has("xError")
+            if(instagramLink!=null) {
+                try {
+                    JSONObject post=probe.extractInstagram(instagramLink);
+                    JSONObject downloaded=XMedia.downloadAll(getTargetContext(),post,true);
+                    report.put("instagramAllSaved",downloaded.optBoolean("allSaved"));
+                    report.put("instagramCount",post.getJSONArray("media").length());
+                    if(!downloaded.optBoolean("allSaved"))report.put("instagramError","download-incomplete");
+                } catch(Exception failure){report.put("instagramError",failure.getClass().getSimpleName());}
+            }
+            boolean passed = !report.has("fixtureError") && !report.has("xError") && !report.has("instagramError")
                     && !(report.has("x") && report.getJSONObject("x").has("gifError"));
             report.put("passed", passed);
             if (!passed) code = Activity.RESULT_CANCELED;

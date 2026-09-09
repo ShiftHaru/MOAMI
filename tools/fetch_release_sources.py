@@ -23,7 +23,7 @@ def main():
             raise ValueError('Source size/hash mismatch: ' + name)
         target.write_bytes(data)
         print(name, 'verified')
-    print('APK RELEASE BLOCKED: exact Android native corresponding source remains unverified.')
+    print('Acquisition receipts verified. For 0.33.3 use BUILDING_SOURCE_RELEASE.md; these downloads alone do not cover old 0.33.2 APKs.')
 
 
 if __name__ == '__main__':

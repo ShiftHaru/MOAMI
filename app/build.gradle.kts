@@ -56,8 +56,8 @@ android {
         applicationId = if (shareOnly) "dev.browserdownloader.share" else "dev.browserdownloader.probe"
         minSdk = 29
         targetSdk = 36
-        versionCode = 35
-        versionName = if (shareOnly) "0.33.2-share" else "0.33.2-full"
+        versionCode = 36
+        versionName = if (shareOnly) "0.33.3-share" else "0.33.3-full"
         buildConfigField("boolean", "SHARE_ONLY", shareOnly.toString())
         ndk { abiFilters += "arm64-v8a" }
         testInstrumentationRunner = "dev.browserdownloader.probe.PreviewTest"

@@ -7,14 +7,14 @@ import subprocess
 from pathlib import Path
 
 
-def verify(build_tools, full, share):
+def verify(build_tools, full, share, version='0.33.3', code=36):
     reports = []
     certificates = []
     for edition, apk in [('full', full), ('share', share)]:
         badging = subprocess.check_output([str(build_tools / 'aapt.exe'), 'dump', 'badging', str(apk)]).decode('utf-8')
         manifest = subprocess.check_output([str(build_tools / 'aapt.exe'), 'dump', 'xmltree', str(apk), 'AndroidManifest.xml']).decode('utf-8')
         package = 'dev.browserdownloader.share' if edition == 'share' else 'dev.browserdownloader.probe'
-        assert f"name='{package}' versionCode='35' versionName='0.33.2-{edition}'" in badging
+        assert f"name='{package}' versionCode='{code}' versionName='{version}-{edition}'" in badging
         assert "native-code: 'arm64-v8a'" in badging
         assert 'application-debuggable' not in badging
         assert "android.intent.action.SEND" in manifest
@@ -32,7 +32,7 @@ def verify(build_tools, full, share):
         cert = re.search(r'certificate SHA-256 digest: ([0-9a-f]+)', signer)
         assert cert, 'Missing signing certificate digest'
         certificates.append(cert.group(1))
-        reports.append(dict(edition=edition, version='0.33.2-' + edition, versionCode=35,
+        reports.append(dict(edition=edition, version=version + '-' + edition, versionCode=code,
                             package=package, bytes=apk.stat().st_size,
                             sha256=hashlib.sha256(apk.read_bytes()).hexdigest()))
     assert certificates[0] == certificates[1], 'Editions must use the same signing certificate'
@@ -42,7 +42,9 @@ def verify(build_tools, full, share):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--build-tools', type=Path, required=True)
+    parser.add_argument('--version', default='0.33.3')
+    parser.add_argument('--code', type=int, default=36)
     parser.add_argument('--full', type=Path, default=Path('app/build/outputs/apk/release/app-release.apk'))
     parser.add_argument('--share', type=Path, default=Path('app/build/share-only/outputs/apk/release/app-release.apk'))
     args = parser.parse_args()
-    print(json.dumps(verify(args.build_tools, args.full, args.share), indent=2))
+    print(json.dumps(verify(args.build_tools, args.full, args.share, args.version, args.code), indent=2))

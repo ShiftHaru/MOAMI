@@ -1,9 +1,9 @@
 {
   "repository": "https://github.com/termux/termux-packages",
   "commit": "4af4053b0a94ac28a035159d3f425e0c32b8944f",
-  "status": "arm64-built-not-integrated",
+  "status": "integrated-0.33.3-arm64",
   "matchesExistingApk": false,
-  "explanation": "Chosen near the observed build date for investigation. Date proximity and matching Python version do not prove binary correspondence.",
+  "explanation": "This pinned snapshot with the recorded MOAMI patches built the replacement runtime. It does not correspond to the old 0.33.2 native binaries.",
   "packages": [
     {
       "package": "python",
@@ -338,7 +338,9 @@
     "date": "2026-09-09",
     "host": "Ubuntu 24.04 WSL2 x86_64",
     "androidRuntimeTested": false,
-    "supportedAppAbis": ["arm64-v8a"],
+    "supportedAppAbis": [
+      "arm64-v8a"
+    ],
     "artifacts": [
       {
         "file": "python_3.12.11_aarch64.deb",

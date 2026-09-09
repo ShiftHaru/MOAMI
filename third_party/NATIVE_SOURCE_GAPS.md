@@ -1,3 +1,33 @@
+# 0.33.3 source mapping
+
+The opaque youtubedl-android 0.18.1 dependency is removed in 0.33.3.
+Full and Share use the same locked ARM64 Python 3.12.11 / QuickJS 2025-04-26
+runtime, built from the pinned Termux recipes with the recorded MOAMI patches.
+The 17-package closure, packaged file hashes and actual source-built DEB hashes
+are in `third_party/native-runtime-lock.json` (paths relative to repository root).
+Native license texts accompany the runtime; the Mozilla MPL-2.0 text is also an
+APK asset. Original upstream attribution is retained.
+
+`third_party/BUILDING_SOURCE_RELEASE.md` describes the corresponding-source
+bundle: actual patched recipes, original source inputs, build configuration,
+62 Maven source JARs, desugaring release sources, yt-dlp sources and notices.
+Python and QuickJS were rebuilt from the extracted recipe archive using the
+existing build cache/sysroot; this is not a clean-room or byte-reproducibility
+claim. On an ARM64 Android 16 device, runtime imports, QuickJS, generated MP4/GIF,
+X GIF download/repeat-save and four Instagram media saves passed.
+
+Distribute each 0.33.3 APK with its matching source archive, notices and hashes.
+This does NOT supply the missing corresponding source for old 0.33.2 APKs.
+Before making a repository public, remove those old binary assets from public
+availability (or obtain their actual corresponding sources). Private prereleases
+become visible when their repository becomes public. No visibility change is
+performed by these build tools. Platform terms and Play approval are separate.
+
+## Historical investigation (before replacement)
+
+The text below records earlier versions and unresolved old-binary findings;
+it does not describe the 0.33.3 runtime.
+
 # Native corresponding-source gaps
 
 APK distribution is not approved by this inventory. Certificate publication was

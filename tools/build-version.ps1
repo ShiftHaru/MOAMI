@@ -18,6 +18,7 @@ $repo = Split-Path $PSScriptRoot -Parent
 $utf8 = New-Object System.Text.UTF8Encoding($false)
 $originalSdk = $env:ANDROID_HOME
 $originalSigning = $env:BROWSERDOWNLOADER_SIGNING_PROPERTIES
+$originalNative = $env:MOAMI_NATIVE_RUNTIME
 $run = $null
 $report = $null
 
@@ -60,6 +61,9 @@ try {
     $gradle = Join-Path $source 'gradlew.bat'
     $appBuild = Join-Path $source 'app/build.gradle.kts'
     if (-not (Test-Path $gradle) -or -not (Test-Path $appBuild)) { throw 'This revision does not contain the supported Android app layout.' }
+    if (Test-Path (Join-Path $source 'third_party/native-runtime-lock.json')) {
+        if (-not $env:MOAMI_NATIVE_RUNTIME) { $env:MOAMI_NATIVE_RUNTIME = Join-Path $repo '.local/native-runtime' }
+    }
     if ($Edition -eq 'share' -and -not ([IO.File]::ReadAllText($appBuild).Contains('moamiShare'))) {
         throw 'This revision does not support the share edition.'
     }
@@ -120,4 +124,5 @@ try {
 } finally {
     $env:ANDROID_HOME = $originalSdk
     $env:BROWSERDOWNLOADER_SIGNING_PROPERTIES = $originalSigning
+    $env:MOAMI_NATIVE_RUNTIME = $originalNative
 }

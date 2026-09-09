@@ -5,7 +5,6 @@ import android.os.Build;
 import android.os.SystemClock;
 import android.graphics.ImageDecoder;
 import android.graphics.drawable.AnimatedImageDrawable;
-import com.yausername.youtubedl_android.YoutubeDL;
 import org.json.JSONObject;
 import java.io.File;
 import java.io.IOException;
@@ -15,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
-/** Local G3 experiment. Runtime paths are pinned to youtubedl-android 0.18.1. */
+/** Media adapter using the source-built, hash-verified MOAMI runtime. */
 public final class NativeProbe {
     private final Context context;
     private final File root;
@@ -24,9 +23,9 @@ public final class NativeProbe {
         this.context = context.getApplicationContext();
         PrivateMediaFiles.recoverOnce(new File(this.context.getNoBackupFilesDir(), "x-media"));
         PublicDownloads.recover(this.context);
-        YoutubeDL.getInstance().init(this.context);
-        root = new File(context.getNoBackupFilesDir(), "youtubedl-android");
+        root = NativeRuntime.install(this.context);
         File executable = new File(root, "yt-dlp/yt-dlp");
+        if (!executable.getParentFile().mkdirs() && !executable.getParentFile().isDirectory()) throw new IOException("Runtime directory failed");
         byte[] bundled;
         try (java.io.InputStream input = context.getResources().openRawResource(R.raw.ytdlp)) {
             java.io.ByteArrayOutputStream bytes = new java.io.ByteArrayOutputStream();
@@ -40,7 +39,7 @@ public final class NativeProbe {
             throw new IOException("번들 yt-dlp 해시 불일치");
         }
         // Update only from the hash-checked APK resource, never downloaded executable code.
-        if (!Arrays.equals(bundled, Files.readAllBytes(executable.toPath()))) Files.write(executable.toPath(), bundled);
+        if (!executable.isFile() || !Arrays.equals(bundled, Files.readAllBytes(executable.toPath()))) Files.write(executable.toPath(), bundled);
     }
 
     private String run(String binary, int timeoutSeconds, String... args) throws Exception {
@@ -52,10 +51,10 @@ public final class NativeProbe {
         Process process = null;
         try {
             ProcessBuilder builder = new ProcessBuilder(command).redirectOutput(output).redirectError(errorOutput);
-            String packages = new File(root, "packages").getPath();
-            builder.environment().put("LD_LIBRARY_PATH", packages + "/python/usr/lib:" + packages + "/ffmpeg/usr/lib");
-            builder.environment().put("PYTHONHOME", packages + "/python/usr");
-            builder.environment().put("SSL_CERT_FILE", packages + "/python/usr/etc/tls/cert.pem");
+            builder.environment().put("LD_LIBRARY_PATH", new File(root,"usr/lib").getPath());
+            builder.environment().put("PYTHONHOME", new File(root,"usr").getPath());
+            builder.environment().put("SSL_CERT_FILE", new File(root,"usr/etc/tls/cert.pem").getPath());
+            builder.environment().put("PYTHONDONTWRITEBYTECODE", "1");
             builder.environment().put("TMPDIR", context.getCacheDir().getPath());
             builder.environment().put("PYTHONIOENCODING", "utf-8");
             process = builder.start();
@@ -111,10 +110,12 @@ public final class NativeProbe {
     }
 
     public JSONObject environment() throws Exception {
-        JSONObject report = new JSONObject().put("wrapper", "0.18.1").put("android", Build.VERSION.RELEASE)
+        JSONObject report = new JSONObject().put("runtime", "moami-source-built").put("android", Build.VERSION.RELEASE)
                 .put("sdk", Build.VERSION.SDK_INT).put("abi", Build.SUPPORTED_ABIS[0])
                 .put("python", run("libpython.so", 15, "--version"))
                 .put("ytDlp", yt(20, "--version"));
+        report.put("quickjs", run("libqjs.so",15,"-e","console.log('quickjs-ok')"));
+        report.put("modules", run("libpython.so",15,"-c","import ssl,sqlite3,ctypes,bz2,lzma,zlib,hashlib,dbm.gnu; print('imports-ok')"));
         report.put("gifEncoder", "com.squareup:gifencoder:0.10.1");
         return report;
     }
