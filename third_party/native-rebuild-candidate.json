@@ -1,7 +1,7 @@
 {
   "repository": "https://github.com/termux/termux-packages",
   "commit": "4af4053b0a94ac28a035159d3f425e0c32b8944f",
-  "status": "candidate-patched-not-integrated",
+  "status": "arm64-built-not-integrated",
   "matchesExistingApk": false,
   "explanation": "Chosen near the observed build date for investigation. Date proximity and matching Python version do not prove binary correspondence.",
   "packages": [
@@ -333,5 +333,23 @@
       "path": "third_party/native-patches/ncurses-no-extra-foot.patch",
       "sha256": "bb2393356288d9f38643cc7ecd20a776842205c2e8cf38db319559e0f1e7437a"
     }
-  ]
+  ],
+  "buildResults": {
+    "date": "2026-09-09",
+    "host": "Ubuntu 24.04 WSL2 x86_64",
+    "androidRuntimeTested": false,
+    "x86_64Built": false,
+    "artifacts": [
+      {
+        "file": "python_3.12.11_aarch64.deb",
+        "bytes": 7546392,
+        "sha256": "2c08d1fd022f9da27991fefb15d83e011021d02d9b92d82927a23bd3a333fe79"
+      },
+      {
+        "file": "quickjs_1:20250426_aarch64.deb",
+        "bytes": 1298864,
+        "sha256": "91434f5d1d45aa4c5e99d18a8b6e44583bd71665fca27c37f774b0e61245164e"
+      }
+    ]
+  }
 }

@@ -19,10 +19,23 @@ The current isolated layout is:
 Obtain the pinned recipe archive using `tools/fetch_release_sources.py` and
 extract it under the Linux source directory, stripping its first path component.
 Install standard Ubuntu development tools (C/C++, Python 3.12, autoconf/automake,
-libtool, pkg-config, cmake/ninja, gettext, texinfo, bison/flex, gawk, jq, curl/git,
+libtool, pkg-config, cmake/ninja, gettext/autopoint, texinfo, bison/flex, gawk, jq, curl/git,
 zip/unzip, xz/bzip2/lzip, rsync, file, locales, OpenJDK 17 JRE (for the certificate
-package's host-side keystore generation), and common Python development
+package's host-side keystore generation), Tcl (SQLite's host-side generator), and common Python development
 libraries). This is a tested initial tool set, not yet a complete dependency lock.
+
+Host package installation (inside Ubuntu, as root):
+
+```sh
+apt-get update
+apt-get install -y --no-install-recommends \
+  build-essential ca-certificates curl git python3 python-is-python3 \
+  python3-venv python3-pip unzip zip xz-utils bzip2 patch autoconf automake \
+  libtool-bin pkg-config cmake ninja-build gettext autopoint texinfo bison flex \
+  gawk jq rsync file sudo locales libssl-dev zlib1g-dev libffi-dev libbz2-dev \
+  liblzma-dev libsqlite3-dev libncurses-dev libreadline-dev help2man gperf lzip \
+  openjdk-17-jre-headless tcl
+```
 
 ## Recorded recipe change
 
@@ -54,3 +67,19 @@ installing prebuilt Termux dependencies. Preserve the downloaded sources, patche
 build configuration, notices and hashes before packaging. x86_64, QuickJS, package
 assembly and app integration remain separate validation steps. See
 `NATIVE_SOURCE_GAPS.md`; this setup does not close the APK distribution gate.
+
+## Observed build result (2026-09-09)
+
+The ARM64 Python 3.12.11 build finished successfully. The subsequent command
+`./build-package.sh -a aarch64 quickjs` also finished successfully (log:
+`/opt/moami-native/quickjs-aarch64.log`). Both Termux symbol checks reported zero
+remaining undefined-symbol files after their standard exclusions for static
+archives/objects. This is a build-time check, not Android runtime testing.
+
+The Python and QuickJS executables are ARM aarch64 ELF PIE files using Android's
+`/system/bin/linker64`. Python additionally needs the packaged `libpython3.12`
+and Android support library; copying the executable alone is insufficient.
+Package hashes from this run are in `native-rebuild-candidate.json`. They identify
+these outputs, not a claim of byte-for-byte reproducibility across clean builds.
+Source caches and dependency packages remain in the WSL filesystem. x86_64,
+redistribution archive assembly, APK integration and device tests are not complete.

@@ -49,8 +49,10 @@ near an observed native build date; this is a candidate, not the original build
 revision. Its Python version is 3.12.11, but its Expat recipe is 2.7.1 while the
 existing APK reports 2.7.3. Do not mark binary correspondence complete.
 
-For replacement builds, use a working Linux/WSL2 container engine, pin the builder
-image digest and NDK, build dependencies from the candidate source (not downloaded
+For replacement builds, use the Linux environment documented in
+`WSL_NATIVE_BUILD.md` (Docker is not required), pin the host inputs and NDK,
+build dependencies from the candidate source (not downloaded
 prebuilt packages), archive all actual source inputs/patches/notices, then package
 and test arm64-v8a and x86_64. Any recipe modifications must be preserved as source.
-The acquired snapshot has not been built or integrated into the app.
+Source builds are in progress under Ubuntu 24.04 WSL2. No replacement runtime has
+been integrated into the app; successful dependency builds do not close this gate.
