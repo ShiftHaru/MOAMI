@@ -36,7 +36,7 @@ For the six ABI artifacts identified by hashes in
 4. The complete applicable license and copyright notices.
 
 No maintainer message has been sent. A different route is to build replacement
-native runtimes from documented sources and validate both ABIs and all media
+native runtimes from documented sources and validate ARM64 and all media
 flows. That is a runtime replacement, not proof about the existing binaries.
 
 ## Rebuild candidate acquired
@@ -53,6 +53,7 @@ For replacement builds, use the Linux environment documented in
 `WSL_NATIVE_BUILD.md` (Docker is not required), pin the host inputs and NDK,
 build dependencies from the candidate source (not downloaded
 prebuilt packages), archive all actual source inputs/patches/notices, then package
-and test arm64-v8a and x86_64. Any recipe modifications must be preserved as source.
+and test arm64-v8a. Only ARM64 is supported; x86_64 is no longer a release target.
+Any recipe modifications must be preserved as source.
 Source builds are in progress under Ubuntu 24.04 WSL2. No replacement runtime has
 been integrated into the app; successful dependency builds do not close this gate.

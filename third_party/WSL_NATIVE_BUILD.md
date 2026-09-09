@@ -64,8 +64,9 @@ wsl -d Ubuntu-24.04 -u builder -- bash -lc 'cd /opt/moami-native/termux-packages
 
 Do not add `-I`: the intended path builds dependencies from source rather than
 installing prebuilt Termux dependencies. Preserve the downloaded sources, patches,
-build configuration, notices and hashes before packaging. x86_64, QuickJS, package
-assembly and app integration remain separate validation steps. See
+build configuration, notices and hashes before packaging. QuickJS, package
+assembly and app integration remain separate validation steps. Only arm64-v8a is
+an app target; the x86_64 host remains a cross-compilation environment. See
 `NATIVE_SOURCE_GAPS.md`; this setup does not close the APK distribution gate.
 
 ## Observed build result (2026-09-09)
@@ -81,5 +82,6 @@ The Python and QuickJS executables are ARM aarch64 ELF PIE files using Android's
 and Android support library; copying the executable alone is insufficient.
 Package hashes from this run are in `native-rebuild-candidate.json`. They identify
 these outputs, not a claim of byte-for-byte reproducibility across clean builds.
-Source caches and dependency packages remain in the WSL filesystem. x86_64,
-redistribution archive assembly, APK integration and device tests are not complete.
+Source caches and dependency packages remain in the WSL filesystem. Redistribution
+archive assembly, APK integration and device tests are not complete.
+The owner removed x86_64 app support on 2026-09-09; it is not a pending build gate.

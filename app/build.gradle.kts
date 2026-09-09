@@ -50,7 +50,7 @@ android {
         targetSdk = 36
         versionCode = 32
         versionName = "0.32.0-chrome-page-info"
-        ndk { abiFilters += listOf("arm64-v8a", "x86_64") }
+        ndk { abiFilters += "arm64-v8a" }
         testInstrumentationRunner = "dev.browserdownloader.probe.PreviewTest"
     }
     compileOptions {
