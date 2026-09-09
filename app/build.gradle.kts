@@ -48,8 +48,8 @@ android {
         applicationId = "dev.browserdownloader.probe"
         minSdk = 29
         targetSdk = 36
-        versionCode = 31
-        versionName = "0.31.0-moami-save-feedback"
+        versionCode = 32
+        versionName = "0.32.0-chrome-page-info"
         ndk { abiFilters += listOf("arm64-v8a", "x86_64") }
         testInstrumentationRunner = "dev.browserdownloader.probe.PreviewTest"
     }

@@ -1,5 +1,5 @@
 {
-  "version": "0.31.0-moami-save-feedback",
+  "version": "0.32.0-chrome-page-info",
   "scope": "Resolved debug runtime artifacts plus desugaring input; not a complete APK source audit",
   "artifacts": [
     {

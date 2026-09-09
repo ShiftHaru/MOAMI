@@ -141,7 +141,7 @@ public final class ChromeProbeService extends AccessibilityService {
     private void capture() {
         cancelLookup();
         if (status != null) status.setText("Chrome 사이트 정보에서 전체 주소 확인 중");
-        addressLookup = new ChromePageAddress(this::chromeRoot, full -> {
+        addressLookup = new ChromePageAddress(this::chromeRoot, () -> performGlobalAction(GLOBAL_ACTION_BACK), full -> {
             addressLookup = null;
             if (full.isEmpty()) {
                 if (status != null) status.setText("전체 주소 확인 실패 · 원래 탭에서 다시 검사해 주세요.");
