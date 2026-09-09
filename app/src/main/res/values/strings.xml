@@ -1,0 +1,3 @@
+<resources>
+    <string name="probe_description">동의 후 Chrome의 실제 탭 이미지 정보를 검사하고 이미지 서버에 미리보기·저장 요청을 보냅니다. X 서랍에 별도로 동의하면 X 실행 여부를 확인해 링크 입력 버튼을 표시합니다. X 화면 내용과 클립보드는 자동으로 읽지 않습니다. 웹페이지 HTML이나 Chrome 쿠키를 가져오지 않습니다.</string>
+</resources>

@@ -1,0 +1,7 @@
+<resources>
+    <style name="ResultsPopup" parent="android:style/Theme.Material.Light.Dialog.NoActionBar">
+        <item name="android:windowCloseOnTouchOutside">false</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:backgroundDimAmount">0.35</item>
+    </style>
+</resources>

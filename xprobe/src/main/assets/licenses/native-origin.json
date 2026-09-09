@@ -1,0 +1,57 @@
+{
+  "tag": "0.18.1",
+  "commit": "d725d5c9a18c3a99a13ee0308bf78275dc310760",
+  "files": [
+    {
+      "apkPath": "lib/arm64-v8a/libpython.so",
+      "upstreamPath": "library/src/main/jniLibs/arm64-v8a/libpython.so",
+      "gitBlobSha1": "7254d022d2fcc4aff283bc8c318f658582ea3a96",
+      "sha256": "58ba29cfc5a6d88281c07b2b480fb1d8cce1b78f280b002347f792cfd9cf5901",
+      "matches": true
+    },
+    {
+      "apkPath": "lib/arm64-v8a/libpython.zip.so",
+      "upstreamPath": "library/src/main/jniLibs/arm64-v8a/libpython.zip.so",
+      "gitBlobSha1": "0296909da7838d374cc9d917b842597c6df29d6b",
+      "sha256": "7edecb6c9bd3a94456168d44911d8aea9f917bedef90c320a29500d92ac3eb62",
+      "matches": true
+    },
+    {
+      "apkPath": "lib/arm64-v8a/libqjs.so",
+      "upstreamPath": "library/src/main/jniLibs/arm64-v8a/libqjs.so",
+      "gitBlobSha1": "0648b0c4528f0af8948318ad7f66325863b37460",
+      "sha256": "a0fe160a8cd76eec34132f945664856e96687d701e3b1ff28dff44ea1fad13bc",
+      "matches": true
+    },
+    {
+      "apkPath": "lib/x86_64/libpython.so",
+      "upstreamPath": "library/src/main/jniLibs/x86_64/libpython.so",
+      "gitBlobSha1": "58592f576e71599cd86027e48b0c8acd27939005",
+      "sha256": "894dd7e4f8dcc47dd8e87b5d2696e0e6eb03d125683e8b81475682fb8f619e87",
+      "matches": true
+    },
+    {
+      "apkPath": "lib/x86_64/libpython.zip.so",
+      "upstreamPath": "library/src/main/jniLibs/x86_64/libpython.zip.so",
+      "gitBlobSha1": "da0014c2680ba03493f234334a07c77c27333c76",
+      "sha256": "27caa316e09681ada860fdb6b35c1914e541e266e674141361758ac127fe2f15",
+      "matches": true
+    },
+    {
+      "apkPath": "lib/x86_64/libqjs.so",
+      "upstreamPath": "library/src/main/jniLibs/x86_64/libqjs.so",
+      "gitBlobSha1": "4834a3bf7d01076d6e17cb0ef5fc06f4cf12a7c6",
+      "sha256": "d295c3d13f5cbd17ac8de1a4e4352ac7099617e3cfa2706977a7c2ac7092b487",
+      "matches": true
+    }
+  ],
+  "repository": "https://github.com/yausername/youtubedl-android",
+  "tagObject": "864791ae478e5e32194722337286790829c0a689",
+  "tree": "8d6eedac30542000718fcc82ba4a10813c123762",
+  "scope": "Exact binary origin comparison only; corresponding source and reproducible build inputs remain unverified",
+  "relatedCommits": [
+    "ed17169174832cbdd3839f7f5d5b35c9cc72e85f",
+    "d2668591d3aa7f05cabeb3fba139b32db79c0e1c",
+    "4e2bb8b4dbe15d13f57cf37c72e155b9f359d3fb"
+  ]
+}
